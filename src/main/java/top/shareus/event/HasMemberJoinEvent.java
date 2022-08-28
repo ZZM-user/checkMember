@@ -30,7 +30,7 @@ public class HasMemberJoinEvent extends SimpleListenerHost {
             MessageChainBuilder builder = new MessageChainBuilder();
             builder.add(new At(member.getId()));
             builder.add("欢迎欢迎！");
-            event.getGroup().sendMessage(builder.toString());
+            event.getGroup().sendMessage(builder.asMessageChain());
         }
         
     }

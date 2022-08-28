@@ -35,15 +35,17 @@ public class OrderListEvent extends SimpleListenerHost {
     private void onResGroupMessageEvent(GroupMessageEvent event) {
         long id = event.getGroup().getId();
         Long aLong = GroupsConstant.ADMIN_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
-        
-        if (ObjectUtil.isNotNull(aLong)) {
+        Long tLong = GroupsConstant.TEST_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
+    
+        if (ObjectUtil.isNotNull(aLong) || ObjectUtil.isNotNull(tLong)) {
             if (event.getMessage().contentToString().equals(ORDER)) {
                 MessageChainBuilder builder = new MessageChainBuilder();
-                builder.add(new At(event.getSender().getId()));
+                builder.add(new At(event.getSender().getId()) + "\n");
                 for (Command command : ORDER_LIST) {
-                    builder.add(command.getUsage() + "\t" + command.getDescription());
+                    builder.add(command.getUsage() + " --- " + command.getDescription() + "\n");
                 }
-                CheckMember.INSTANCE.getLogger().info("撤回消息：" + event.getSender().getNick() + "——" + event.getMessage().contentToString());
+                event.getGroup().sendMessage(builder.asMessageChain());
+                CheckMember.INSTANCE.getLogger().info("获取指令集：" + event.getSender().getNick() + "——" + event.getMessage().contentToString());
             }
         }
     }
