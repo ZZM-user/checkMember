@@ -22,14 +22,13 @@ public class HasMemberJoinEvent extends SimpleListenerHost {
     private void onResGroupMessageEvent(MemberJoinEvent event) {
         long id = event.getGroupId();
         Long aLong = GroupsConstant.ADMIN_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
-        Long rLong = GroupsConstant.RES_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
         Long cLong = GroupsConstant.CHAT_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
         
-        if (ObjectUtil.isNotNull(aLong) || ObjectUtil.isNotNull(rLong) || ObjectUtil.isNotNull(cLong)) {
+        if (ObjectUtil.isNotNull(aLong) || ObjectUtil.isNotNull(cLong)) {
             NormalMember member = event.getMember();
             MessageChainBuilder builder = new MessageChainBuilder();
             builder.add(new At(member.getId()));
-            builder.add("欢迎欢迎！");
+            builder.add(" 欢迎欢迎！");
             event.getGroup().sendMessage(builder.asMessageChain());
         }
         
