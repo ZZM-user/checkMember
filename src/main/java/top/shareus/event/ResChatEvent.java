@@ -30,8 +30,10 @@ public class ResChatEvent extends SimpleListenerHost {
                 event.getSender().mute(BanResWordConstant.MUTE_SECONDS);
                 // 撤它消息
                 MessageSource.recall(event.getMessage());
-                
-                CheckMember.INSTANCE.getLogger().info("撤回消息：" + event.getSender().getNick() + "——" + event.getMessage().contentToString());
+                String message = "尝试撤回消息 " + event.getSender().getNick() + "：" + event.getMessage().contentToString();
+                CheckMember.INSTANCE.getLogger().info(message);
+                // 通知群
+                event.getBot().getGroup(GroupsConstant.ADMIN_GROUPS.get(0)).sendMessage(message);
             }
         }
     }

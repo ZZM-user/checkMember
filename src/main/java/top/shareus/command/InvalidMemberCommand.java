@@ -42,20 +42,24 @@ public class InvalidMemberCommand extends JRawCommand {
     public void onCommand(@NotNull CommandContext context, @NotNull MessageChain args) {
         Bot bot = BotManager.getBot();
         CommandSender sender = context.getSender();
-        
+    
         ContactList<NormalMember> adminMemberList = parseGroup(bot, GroupsConstant.ADMIN_GROUPS);
         ContactList<NormalMember> resMemberList = parseGroup(bot, GroupsConstant.RES_GROUPS);
         ContactList<NormalMember> chatMemberList = parseGroup(bot, GroupsConstant.CHAT_GROUPS);
-        
+    
         CheckMember.INSTANCE.getLogger().debug(adminMemberList.size() + "\t" + resMemberList.size() + "\t" + chatMemberList.size());
         Boolean hasGroups = hasGroups(adminMemberList, resMemberList, chatMemberList);
-        if (hasGroups) {
-            ContactList<NormalMember> invalidMember = getInvalidMember(adminMemberList, resMemberList, chatMemberList);
-            String formatGroupMember = GroupCommand.formatGroupMember("失效人员列表", invalidMember);
-            sender.sendMessage(formatGroupMember);
-            return;
+        try {
+            if (hasGroups) {
+                ContactList<NormalMember> invalidMember = getInvalidMember(adminMemberList, resMemberList, chatMemberList);
+                String formatGroupMember = GroupCommand.formatGroupMember("失效人员列表", invalidMember);
+                sender.sendMessage(formatGroupMember);
+            }
+        } catch (Exception e) {
+            CheckMember.INSTANCE.getLogger().error(e);
+            sender.sendMessage("操作失败，请联系管理员！");
         }
-        sender.sendMessage("操作失败，请联系管理员！");
+    
     }
     
     /**
