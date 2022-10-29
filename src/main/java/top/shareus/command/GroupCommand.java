@@ -1,6 +1,5 @@
 package top.shareus.command;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import net.mamoe.mirai.Bot;
@@ -14,6 +13,8 @@ import net.mamoe.mirai.message.data.MessageChain;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.CheckMember;
 import top.shareus.common.BotManager;
+import top.shareus.util.LogUtils;
+import top.shareus.util.NormalMemberUtils;
 
 import java.text.SimpleDateFormat;
 
@@ -50,18 +51,18 @@ public final class GroupCommand extends JRawCommand {
         Group group = bot.getGroup(Long.parseLong(args.get(0).toString()));
         if (ObjectUtil.isNull(group)) {
             String message = "该群组成员获取失败!\n group：" + args.get(0);
-            CheckMember.INSTANCE.getLogger().error(message);
+            LogUtils.error(message);
             sender.sendMessage(message);
             return;
         }
         try {
             ContactList<NormalMember> members = group.getMembers();
             String formatGroupMember = formatGroupMember("群成员列表", members);
-            CheckMember.INSTANCE.getLogger().info(args.get(0) + "\t请求到了：" + members.size() + "名成员的信息");
+            LogUtils.info(args.get(0) + "\t请求到了：" + members.size() + "名成员的信息");
         
             sender.sendMessage(formatGroupMember);
         } catch (Exception e) {
-            CheckMember.INSTANCE.getLogger().error(e);
+            LogUtils.error(e);
             sender.sendMessage("操作失败，请联系管理员！");
         }
     }
@@ -83,31 +84,7 @@ public final class GroupCommand extends JRawCommand {
         String temp;
         int index = 0;
         for (NormalMember member : members) {
-            temp = ++index
-                           // qq
-                           + "：" + member.getId()
-                           // 备注
-                           + "-" + member.getRemark()
-                           // 群名片
-                           + "-" + member.getNameCard()
-                           // 所属群组名称
-                           + "-" + member.getGroup().getName()
-                           // 所属群组
-                           // + "-" + member.getGroup().getId()
-                           // 特殊头衔
-                           + "-" + member.getSpecialTitle()
-                           // // 头像
-                           // + "-头像：" + member.getAvatarUrl()
-                           // 是否禁言
-                           // + "-" + (member.isMuted() ? "禁言中" : "未禁言")
-                           // 秒级时间戳 * 1000 = 毫秒级时间戳
-                           // 剩余禁言时长
-                           // + "-" + (member.isMuted() ? DateTime.of(member.getMuteTimeRemaining() * 1000L) : "无禁言")
-                           // 最后发言时间
-                           + "-" + DateTime.of(member.getLastSpeakTimestamp() * 1000L)
-                           // 进群时间
-                           + "-" + DateTime.of(member.getJoinTimestamp() * 1000L)
-                           + '\n';
+            temp = ++index + NormalMemberUtils.format(member, false);
             builder.append(temp);
         }
         builder.append("总人数：").append(index);

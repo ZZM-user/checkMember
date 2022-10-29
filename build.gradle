@@ -9,7 +9,7 @@ dependencies {
     implementation 'org.projectlombok:lombok:1.18.24'
 }
 group = 'top.shareus'
-version = '0.1.6'
+version = '0.1.7'
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }

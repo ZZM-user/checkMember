@@ -12,6 +12,7 @@ import java.util.List;
  * @Desc： 关于资源群的违禁词
  **/
 public class BanResWordConstant {
+    
     public static final List<String> ZAO = new ArrayList<String>() {{
         add("早");
         add("早啊");

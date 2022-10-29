@@ -5,9 +5,10 @@ import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import top.shareus.command.ClearGroupMemberCommand;
+import top.shareus.command.FindInfoByQQNumber;
 import top.shareus.command.GroupCommand;
 import top.shareus.command.InvalidMemberCommand;
-import top.shareus.event.ForwardMessage;
+import top.shareus.event.ForwardAdminMessage;
 import top.shareus.event.HasMemberJoinEvent;
 import top.shareus.event.OrderListEvent;
 import top.shareus.event.ResChatEvent;
@@ -19,7 +20,7 @@ public final class CheckMember extends JavaPlugin {
     public static final CheckMember INSTANCE = new CheckMember();
     
     private CheckMember() {
-        super(new JvmPluginDescriptionBuilder("top.shareus", "0.1.6")
+        super(new JvmPluginDescriptionBuilder("top.shareus", "0.1.7")
                       .name("checkMember")
                       .author("Baidu")
                       .info("百度定制群管插件")
@@ -28,18 +29,20 @@ public final class CheckMember extends JavaPlugin {
     
     @Override
     public void onEnable() {
+        // 注册指令、监听事件
         CommandManager.INSTANCE.registerCommand(GroupCommand.INSTANCE, true);
         CommandManager.INSTANCE.registerCommand(InvalidMemberCommand.INSTANCE, true);
         CommandManager.INSTANCE.registerCommand(ClearGroupMemberCommand.INSTANCE, true);
+        CommandManager.INSTANCE.registerCommand(FindInfoByQQNumber.INSTANCE, true);
         GlobalEventChannel.INSTANCE.registerListenerHost(new ResChatEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new OrderListEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new HasMemberJoinEvent());
-        GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardMessage());
-        getLogger().info("百度定制群管插件 已启动!");
+        GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardAdminMessage());
+        getLogger().info(getDescription().getInfo() + " " + getDescription().getVersion() + " 已启动!");
     }
     
     @Override
     public void onDisable() {
-        getLogger().info("百度定制群管插件 已关闭!");
+        getLogger().info(getDescription().getInfo() + " 已关闭!");
     }
 }

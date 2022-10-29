@@ -1,7 +1,7 @@
 package top.shareus.common;
 
 import net.mamoe.mirai.Bot;
-import top.shareus.CheckMember;
+import top.shareus.util.LogUtils;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ public class BotManager {
         Bot bot;
         List<Bot> instances = Bot.getInstances();
         if (instances.size() != 0) {
-            CheckMember.INSTANCE.getLogger().debug("获取到机器人实例");
+            LogUtils.debug("获取到机器人实例");
             bot = instances.get(0);
         } else {
-            CheckMember.INSTANCE.getLogger().error(NOT_BOT);
+            LogUtils.error(NOT_BOT);
             throw new RuntimeException(NOT_BOT);
         }
         

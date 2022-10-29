@@ -6,16 +6,17 @@ import net.mamoe.mirai.console.command.CommandContext;
 import net.mamoe.mirai.console.command.CommandSender;
 import net.mamoe.mirai.console.command.java.JRawCommand;
 import net.mamoe.mirai.contact.ContactList;
-import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.message.data.MessageChain;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.CheckMember;
 import top.shareus.common.BotManager;
-import top.shareus.common.constant.GroupsConstant;
+import top.shareus.util.GroupUtils;
+import top.shareus.util.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author： 17602
@@ -43,12 +44,14 @@ public class InvalidMemberCommand extends JRawCommand {
         Bot bot = BotManager.getBot();
         CommandSender sender = context.getSender();
     
-        ContactList<NormalMember> adminMemberList = parseGroup(bot, GroupsConstant.ADMIN_GROUPS);
-        ContactList<NormalMember> resMemberList = parseGroup(bot, GroupsConstant.RES_GROUPS);
-        ContactList<NormalMember> chatMemberList = parseGroup(bot, GroupsConstant.CHAT_GROUPS);
+        // 率先读取出所有群成员信息
+        Map<String, ContactList<NormalMember>> allGroupMembers = GroupUtils.getAllGroupMembers(bot);
+        ContactList<NormalMember> adminMemberList = allGroupMembers.get("admin");
+        ContactList<NormalMember> resMemberList = allGroupMembers.get("res");
+        ContactList<NormalMember> chatMemberList = allGroupMembers.get("chat");
     
-        CheckMember.INSTANCE.getLogger().debug(adminMemberList.size() + "\t" + resMemberList.size() + "\t" + chatMemberList.size());
-        Boolean hasGroups = hasGroups(adminMemberList, resMemberList, chatMemberList);
+        LogUtils.debug(adminMemberList.size() + "\t" + resMemberList.size() + "\t" + chatMemberList.size());
+        Boolean hasGroups = GroupUtils.invalidGroup(adminMemberList, resMemberList, chatMemberList);
         try {
             if (hasGroups) {
                 ContactList<NormalMember> invalidMember = getInvalidMember(adminMemberList, resMemberList, chatMemberList);
@@ -56,7 +59,7 @@ public class InvalidMemberCommand extends JRawCommand {
                 sender.sendMessage(formatGroupMember);
             }
         } catch (Exception e) {
-            CheckMember.INSTANCE.getLogger().error(e);
+            LogUtils.error(e);
             sender.sendMessage("操作失败，请联系管理员！");
         }
     
@@ -82,53 +85,5 @@ public class InvalidMemberCommand extends JRawCommand {
             }
         }
         return new ContactList<>(invalidMember);
-    }
-    
-    /**
-     * 获取当前机器人下的指定群组成员列表
-     *
-     * @param bot
-     * @param group
-     *
-     * @return
-     */
-    private ContactList<NormalMember> parseGroup(Bot bot, List<Long> group) {
-        List<NormalMember> groupList = new ArrayList<>();
-        Group groupTemp;
-        for (Long number : group) {
-            groupTemp = bot.getGroup(number);
-            if (ObjectUtil.isNotNull(groupTemp)) {
-                groupList.addAll(groupTemp.getMembers());
-                CheckMember.INSTANCE.getLogger().debug(groupTemp.getName() + "\n" + groupTemp.getMembers().size() + "成员");
-            } else {
-                CheckMember.INSTANCE.getLogger().error("获取群成员列表失败：" + number);
-            }
-        }
-        return new ContactList<>(groupList);
-    }
-    
-    /**
-     * 检查必备的群是否加载成功
-     *
-     * @param adminMemberList
-     * @param resMemberList
-     * @param chatMemberList
-     *
-     * @return
-     */
-    private Boolean hasGroups
-    (ContactList<NormalMember> adminMemberList, ContactList<NormalMember> resMemberList, ContactList<NormalMember> chatMemberList) {
-        if (adminMemberList.isEmpty()) {
-            CheckMember.INSTANCE.getLogger().error("管理群组加载失败！");
-        }
-        if (resMemberList.isEmpty()) {
-            CheckMember.INSTANCE.getLogger().error("资源群组加载失败！");
-            return false;
-        }
-        if (chatMemberList.isEmpty()) {
-            CheckMember.INSTANCE.getLogger().error("聊天群组加载失败！");
-            return false;
-        }
-        return true;
     }
 }

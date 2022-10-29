@@ -7,10 +7,12 @@ import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MemberJoinEvent;
 import net.mamoe.mirai.message.data.At;
+import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.jetbrains.annotations.NotNull;
-import top.shareus.CheckMember;
 import top.shareus.common.constant.GroupsConstant;
+import top.shareus.util.ImageUtils;
+import top.shareus.util.LogUtils;
 
 /**
  * @Author： 17602
@@ -29,6 +31,9 @@ public class HasMemberJoinEvent extends SimpleListenerHost {
             MessageChainBuilder builder = new MessageChainBuilder();
             builder.add(new At(member.getId()));
             builder.add(" 欢迎欢迎！");
+            // 构建头像 发送
+            Image image = ImageUtils.create(event.getGroup(), member.getAvatarUrl());
+            builder.add(image);
             event.getGroup().sendMessage(builder.asMessageChain());
         }
         
@@ -36,6 +41,6 @@ public class HasMemberJoinEvent extends SimpleListenerHost {
     
     @Override
     public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
-        CheckMember.INSTANCE.getLogger().error(context + "\n" + exception.getCause().getMessage());
+        LogUtils.error(context + "\n" + exception.getCause().getMessage());
     }
 }

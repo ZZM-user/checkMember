@@ -10,16 +10,22 @@ import java.util.List;
  **/
 public class GroupsConstant {
     /**
-     * 管理群组、资源群组、聊天群组
+     * 管理组
      */
     public final static List<Long> ADMIN_GROUPS = new ArrayList<Long>() {{
         add(826992221L);
     }};
     
+    /**
+     * 资源组
+     */
     public final static List<Long> RES_GROUPS = new ArrayList<Long>() {{
         add(879828059L);
     }};
     
+    /**
+     * 聊天组
+     */
     public final static List<Long> CHAT_GROUPS = new ArrayList<Long>() {{
         add(473592372L);
         add(882427723L);
