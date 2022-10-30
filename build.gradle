@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation 'cn.hutool:hutool-all:5.8.5'
     implementation 'org.projectlombok:lombok:1.18.24'
+    implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.10'
 }
 group = 'top.shareus'
 version = '0.1.7'

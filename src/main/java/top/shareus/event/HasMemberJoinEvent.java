@@ -15,10 +15,11 @@ import top.shareus.util.ImageUtils;
 import top.shareus.util.LogUtils;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/28 15:51
- * @Desc： 当有群成员加入的时候
- **/
+ * 新成员加入事件
+ *
+ * @author 17602
+ * @date 2022/8/28 15:51
+ */
 public class HasMemberJoinEvent extends SimpleListenerHost {
     @EventHandler
     private void onResGroupMessageEvent(MemberJoinEvent event) {
@@ -34,9 +35,8 @@ public class HasMemberJoinEvent extends SimpleListenerHost {
             // 构建头像 发送
             Image image = ImageUtils.create(event.getGroup(), member.getAvatarUrl());
             builder.add(image);
-            event.getGroup().sendMessage(builder.asMessageChain());
+            event.getGroup().sendMessage(builder.build());
         }
-        
     }
     
     @Override

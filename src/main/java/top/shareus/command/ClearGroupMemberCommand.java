@@ -18,10 +18,11 @@ import top.shareus.common.BotManager;
 import top.shareus.common.constant.GroupsConstant;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/28 13:36
- * @Desc： 清除指定群成员
- **/
+ * 清除指定群成员
+ *
+ * @author 17602
+ * @date 2022/8/28 13:36
+ */
 public class ClearGroupMemberCommand extends JRawCommand {
     public final static ClearGroupMemberCommand INSTANCE = new ClearGroupMemberCommand();
     

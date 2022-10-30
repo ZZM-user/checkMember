@@ -16,9 +16,9 @@ import java.util.Map;
 /**
  * 群组 常用的工具类
  *
- * @Author： 17602
- * @Date： 2022/10/29 17:17
- **/
+ * @author 17602
+ * @date 2022/10/29 17:17
+ */
 public class GroupUtils {
     
     

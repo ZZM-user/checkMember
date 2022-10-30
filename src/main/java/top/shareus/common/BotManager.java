@@ -6,10 +6,11 @@ import top.shareus.util.LogUtils;
 import java.util.List;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/27 13:58
- * @Desc： 机器人管理
- **/
+ * 机器人管理
+ *
+ * @author 17602
+ * @date 2022/8/27 13:58
+ */
 public class BotManager {
     private static final String NOT_BOT = "没有机器人正在运行";
     

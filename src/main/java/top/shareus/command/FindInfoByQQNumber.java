@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 /**
  * 通过QQ号码查询信息
  *
- * @Author： 17602
- * @Date： 2022/10/29 17:03
+ * @author 17602
+ * @date 2022/10/29 17:03
  **/
 public final class FindInfoByQQNumber extends JRawCommand {
     public static final FindInfoByQQNumber INSTANCE = new FindInfoByQQNumber();

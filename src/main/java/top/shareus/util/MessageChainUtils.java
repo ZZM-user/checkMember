@@ -3,10 +3,10 @@ package top.shareus.util;
 import net.mamoe.mirai.message.data.*;
 
 /**
- * 消息链 的常用工具
+ * 消息链 常用工具类
  *
- * @Author： 17602
- * @Date： 2022/10/29 22:13
+ * @author 17602
+ * @date 2022/10/29 22:13
  **/
 public class MessageChainUtils {
     

@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/28 10:40
- * @Desc： 关于资源群的违禁词
- **/
+ * 关于资源群的违禁词
+ *
+ * @author 17602
+ * @date 2022/8/28 10:40
+ */
 public class BanResWordConstant {
     
     public static final List<String> ZAO = new ArrayList<String>() {{

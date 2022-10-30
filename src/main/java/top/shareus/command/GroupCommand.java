@@ -19,10 +19,11 @@ import top.shareus.util.NormalMemberUtils;
 import java.text.SimpleDateFormat;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/24 16:56
- * @Desc： 获取某个群的成员列表
- **/
+ * 获取某个群的成员列表
+ *
+ * @author 17602
+ * @date 2022/8/24 16:56
+ */
 public final class GroupCommand extends JRawCommand {
     public static final GroupCommand INSTANCE = new GroupCommand();
     

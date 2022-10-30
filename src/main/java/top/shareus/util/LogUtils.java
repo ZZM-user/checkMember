@@ -3,10 +3,10 @@ package top.shareus.util;
 import top.shareus.CheckMember;
 
 /**
- * 日志常用工具
+ * 日志 常用工具类
  *
- * @Author： 17602
- * @Date： 2022/10/29 17:27
+ * @author 17602
+ * @date 2022/10/29 17:27
  */
 public class LogUtils {
     

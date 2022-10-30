@@ -19,10 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/27 19:55
- * @Desc： 筛选无效成员
- **/
+ * 筛选无效成员
+ *
+ * @author 17602
+ * @date 2022/8/27 19:55
+ */
 public class InvalidMemberCommand extends JRawCommand {
     public static final InvalidMemberCommand INSTANCE = new InvalidMemberCommand();
     

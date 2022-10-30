@@ -4,10 +4,10 @@ import cn.hutool.core.date.DateTime;
 import net.mamoe.mirai.contact.NormalMember;
 
 /**
- * 普通群成员常用的工具类
+ * 普通群成员 常用工具类
  *
- * @Author： 17602
- * @Date： 2022/10/29 19:40
+ * @author 17602
+ * @date 2022/10/29 19:40
  **/
 public class NormalMemberUtils {
     

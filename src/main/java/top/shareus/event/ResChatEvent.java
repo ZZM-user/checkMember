@@ -12,10 +12,11 @@ import top.shareus.common.constant.GroupsConstant;
 import top.shareus.util.LogUtils;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/28 9:55
- * @Desc： 监听聊天事件 撤销违禁消息
- **/
+ * 监听聊天事件 撤销违禁消息
+ *
+ * @author 17602
+ * @date 2022/8/28 9:55
+ */
 public class ResChatEvent extends SimpleListenerHost {
     
     @EventHandler

@@ -14,7 +14,10 @@ import top.shareus.event.OrderListEvent;
 import top.shareus.event.ResChatEvent;
 
 /**
+ * 检查成员
+ *
  * @author 17602
+ * @date 2022/10/30 14:46:17
  */
 public final class CheckMember extends JavaPlugin {
     public static final CheckMember INSTANCE = new CheckMember();

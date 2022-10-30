@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/28 10:12
- * @Desc： 常用群常量
- **/
+ * 常用群常量
+ *
+ * @author 17602
+ * @date 2022/8/28 10:12
+ */
 public class GroupsConstant {
     /**
      * 管理组

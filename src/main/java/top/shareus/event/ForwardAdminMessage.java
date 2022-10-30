@@ -17,10 +17,11 @@ import top.shareus.util.LogUtils;
 import top.shareus.util.MessageChainUtils;
 
 /**
- * @Author： 17602
- * @Date： 2022/8/28 16:27
- * @Desc： 转发管理群组信息
- **/
+ * 转发管理群组信息
+ *
+ * @author 17602
+ * @date 2022/8/28 16:27
+ */
 public class ForwardAdminMessage extends SimpleListenerHost {
     @EventHandler
     private void onResGroupMessageEvent(GroupMessageEvent event) {
@@ -31,16 +32,15 @@ public class ForwardAdminMessage extends SimpleListenerHost {
             Bot bot = event.getBot();
             // 获取测试组
             Group group = bot.getGroup(GroupsConstant.TEST_GROUPS.get(0));
-            
+    
             // 构建消息链
             MessageChainBuilder builder = new MessageChainBuilder();
             builder.add(event.getSenderName() + "：");
-            
+    
             MessageChain messages = event.getMessage();
             MessageChainUtils.extract(messages, builder);
             // 发送消息
-            MessageChain build = builder.build();
-            group.sendMessage(build);
+            group.sendMessage(builder.build());
         } else {
             // 监听 【所有群组】 闪照
             MessageChain message = event.getMessage();
