@@ -1,9 +1,8 @@
 package top.shareus.common;
 
+import cn.hutool.core.util.ObjectUtil;
 import net.mamoe.mirai.Bot;
 import top.shareus.util.LogUtils;
-
-import java.util.List;
 
 /**
  * 机器人管理
@@ -12,19 +11,13 @@ import java.util.List;
  * @date 2022/8/27 13:58
  */
 public class BotManager {
-    private static final String NOT_BOT = "没有机器人正在运行";
+    private static final Bot BOT = Bot.getInstances().get(0);
     
     public static Bot getBot() {
-        Bot bot;
-        List<Bot> instances = Bot.getInstances();
-        if (instances.size() != 0) {
-            LogUtils.debug("获取到机器人实例");
-            bot = instances.get(0);
-        } else {
-            LogUtils.error(NOT_BOT);
-            throw new RuntimeException(NOT_BOT);
+        if (ObjectUtil.isNull(BOT)) {
+            LogUtils.error("没有机器人正在运行");
+            throw new RuntimeException("没有机器人正在运行");
         }
-        
-        return bot;
+        return BOT;
     }
 }
