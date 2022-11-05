@@ -10,7 +10,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:5.0.0-alpha.10'
 }
 group = 'top.shareus'
-version = '0.1.7.1'
+version = '0.1.8'
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }
