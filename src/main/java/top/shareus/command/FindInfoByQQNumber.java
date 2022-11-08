@@ -36,7 +36,7 @@ public final class FindInfoByQQNumber extends JRawCommand {
         // 可选设置如下属性
         
         // 设置用法，这将会在 /help 中展示
-        setUsage("/find <[QQNumber]|[NickName]>");
+        setUsage("/find <[QQ]|[NickName]|[Nick]|[SpecialTitle]>");
         // 设置描述，也会在 /help 中展示
         setDescription("获取指定QQ号或指定昵称的群成员信息");
         // 设置指令前缀是可选的，即使用 `test` 也能执行指令而不需要 `/test`

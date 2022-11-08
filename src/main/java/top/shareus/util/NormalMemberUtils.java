@@ -1,6 +1,7 @@
 package top.shareus.util;
 
 import cn.hutool.core.date.DateTime;
+import cn.hutool.core.util.StrUtil;
 import net.mamoe.mirai.contact.NormalMember;
 
 /**
@@ -25,24 +26,24 @@ public class NormalMemberUtils {
                        // 备注
                        + "-" + member.getRemark()
                        // 群名片
-                       + "-" + member.getNameCard()
+                       + (StrUtil.isNotBlank(member.getNameCard()) ? ("-" + member.getNameCard()) : "")
                        // 所属群组名称
                        + "-" + member.getGroup().getName()
                        // 所属群组号码
                        + (more ? "-" + member.getGroup().getId() : "")
                        // 特殊头衔
-                       + "-" + member.getSpecialTitle()
+                       + (StrUtil.isNotBlank(member.getSpecialTitle()) ? ("-" + member.getSpecialTitle()) : "")
                        // // 头像
-                       + (more ? "-" + member.getAvatarUrl() : "")
+                       + (more ? "-" + member.getAvatarUrl() + " " : "")
                        // 是否禁言
                        + (more ? "-" + (member.isMuted() ? "禁言中" : "未禁言") : "")
                        // 秒级时间戳 * 1000 = 毫秒级时间戳
                        // 剩余禁言时长
-                       + (more ? "-" + (member.isMuted() ? DateTime.of(member.getMuteTimeRemaining() * 1000L) : "无禁言") : "")
+                       + (more && member.isMuted() ? ("-" + DateTime.of(member.getMuteTimeRemaining() * 1000L)) : "")
                        // 最后发言时间
                        + "-" + DateTime.of(member.getLastSpeakTimestamp() * 1000L)
                        // 进群时间
                        + "-" + DateTime.of(member.getJoinTimestamp() * 1000L)
-                       + "\n--------------------\n";
+                       + "\n----------------------\n";
     }
 }

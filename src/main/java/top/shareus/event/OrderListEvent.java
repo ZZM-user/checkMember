@@ -6,7 +6,6 @@ import net.mamoe.mirai.console.command.Command;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
-import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.command.ClearGroupMemberCommand;
@@ -51,7 +50,6 @@ public class OrderListEvent extends SimpleListenerHost {
         if (ObjectUtil.isNotNull(aLong) || ObjectUtil.isNotNull(tLong)) {
             if (event.getMessage().contentToString().equals(ORDER)) {
                 MessageChainBuilder builder = new MessageChainBuilder();
-                builder.add(new At(event.getSender().getId()) + "\n");
                 for (Command command : ORDER_LIST) {
                     builder.add(command.getUsage() + " --- " + command.getDescription() + "\n");
                 }

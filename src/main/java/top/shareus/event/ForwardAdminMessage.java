@@ -53,6 +53,7 @@ public class ForwardAdminMessage extends SimpleListenerHost {
                 Group group = bot.getGroup(GroupsConstant.TEST_GROUPS.get(0));
                 
                 MessageChainBuilder builder = new MessageChainBuilder();
+                builder.add("【截取的闪照】");
                 // 发送者
                 builder.add(event.getSenderName());
                 // 所在群聊
@@ -60,7 +61,7 @@ public class ForwardAdminMessage extends SimpleListenerHost {
                 // 发送时间
                 builder.add(DateTime.of(event.getTime()).toDateStr());
                 // 闪照
-                builder.add(flashImage);
+                builder.add(flashImage.getImage());
                 
                 group.sendMessage(builder.build());
             }
