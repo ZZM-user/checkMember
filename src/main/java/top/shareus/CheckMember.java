@@ -41,6 +41,8 @@ public final class CheckMember extends JavaPlugin {
         GlobalEventChannel.INSTANCE.registerListenerHost(new OrderListEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new HasMemberJoinEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardAdminMessage());
+        // 好友闪照转发 预留 不开启
+        // GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardFriendFlashImageMessage());
         getLogger().info(getDescription().getInfo() + " " + getDescription().getVersion() + " 已启动!");
     }
     

@@ -20,7 +20,7 @@ import top.shareus.util.LogUtils;
 public class ResChatEvent extends SimpleListenerHost {
     
     @EventHandler
-    private void onResGroupMessageEvent(GroupMessageEvent event) {
+    private void onAdminGroupMessageEvent(GroupMessageEvent event) {
         long id = event.getGroup().getId();
         Long rLong = GroupsConstant.RES_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
     
