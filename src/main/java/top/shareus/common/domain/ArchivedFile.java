@@ -21,6 +21,11 @@ public class ArchivedFile {
     private String name;
     
     /**
+     * 发件人id
+     */
+    private Long senderId;
+    
+    /**
      * 长度
      */
     private Long size;
@@ -77,6 +82,14 @@ public class ArchivedFile {
         this.md5 = md5;
     }
     
+    public Long getSenderId() {
+        return senderId;
+    }
+    
+    public void setSenderId(Long senderId) {
+        this.senderId = senderId;
+    }
+    
     public String getOriginUrl() {
         return originUrl;
     }
@@ -109,6 +122,7 @@ public class ArchivedFile {
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
         sb.append(", name=").append(name);
+        sb.append(", senderId=").append(senderId);
         sb.append(", size=").append(size);
         sb.append(", md5=").append(md5);
         sb.append(", originUrl=").append(originUrl);

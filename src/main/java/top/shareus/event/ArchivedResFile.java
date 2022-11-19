@@ -69,6 +69,8 @@ public class ArchivedResFile extends SimpleListenerHost {
                     // 将信息 写入数据库
                     archivedFile.setArchiveUrl(uploadFilePath);
                     archivedFile.setArchiveDate(new Date());
+                    long sender = event.getSender().getId();
+                    archivedFile.setSenderId(sender);
                     try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
                         ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
                         mapper.insert(archivedFile);
