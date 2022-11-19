@@ -15,7 +15,7 @@ import net.mamoe.mirai.message.data.MessageChain;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.CheckMember;
 import top.shareus.common.BotManager;
-import top.shareus.common.constant.GroupsConstant;
+import top.shareus.common.core.constant.GroupsConstant;
 
 /**
  * 清除指定群成员

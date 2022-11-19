@@ -1,4 +1,4 @@
-package top.shareus.common.constant;
+package top.shareus.common.core.constant;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -12,7 +12,7 @@ import top.shareus.command.ClearGroupMemberCommand;
 import top.shareus.command.FindInfoByQQNumber;
 import top.shareus.command.GroupCommand;
 import top.shareus.command.InvalidMemberCommand;
-import top.shareus.common.constant.GroupsConstant;
+import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.util.LogUtils;
 
 import java.util.ArrayList;

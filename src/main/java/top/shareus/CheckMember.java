@@ -8,10 +8,7 @@ import top.shareus.command.ClearGroupMemberCommand;
 import top.shareus.command.FindInfoByQQNumber;
 import top.shareus.command.GroupCommand;
 import top.shareus.command.InvalidMemberCommand;
-import top.shareus.event.ForwardAdminMessage;
-import top.shareus.event.HasMemberJoinEvent;
-import top.shareus.event.OrderListEvent;
-import top.shareus.event.ResChatEvent;
+import top.shareus.event.*;
 
 /**
  * 检查成员
@@ -23,11 +20,16 @@ public final class CheckMember extends JavaPlugin {
     public static final CheckMember INSTANCE = new CheckMember();
     
     private CheckMember() {
-        super(new JvmPluginDescriptionBuilder("top.shareus", "0.1.8")
+        super(new JvmPluginDescriptionBuilder("top.shareus", "0.2.0")
                       .name("checkMember")
                       .author("Baidu")
                       .info("百度定制群管插件")
                       .build());
+    }
+    
+    @Override
+    public void onDisable() {
+        getLogger().info(getDescription().getInfo() + " 已关闭!");
     }
     
     @Override
@@ -41,13 +43,9 @@ public final class CheckMember extends JavaPlugin {
         GlobalEventChannel.INSTANCE.registerListenerHost(new OrderListEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new HasMemberJoinEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardAdminMessage());
+        GlobalEventChannel.INSTANCE.registerListenerHost(new ArchivedResFile());
         // 好友闪照转发 预留 不开启
         // GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardFriendFlashImageMessage());
         getLogger().info(getDescription().getInfo() + " " + getDescription().getVersion() + " 已启动!");
-    }
-    
-    @Override
-    public void onDisable() {
-        getLogger().info(getDescription().getInfo() + " 已关闭!");
     }
 }

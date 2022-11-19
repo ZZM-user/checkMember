@@ -6,7 +6,7 @@ import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 import top.shareus.CheckMember;
-import top.shareus.common.constant.GroupsConstant;
+import top.shareus.common.core.constant.GroupsConstant;
 
 import java.util.ArrayList;
 import java.util.HashMap;

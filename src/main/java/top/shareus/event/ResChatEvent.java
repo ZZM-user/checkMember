@@ -7,8 +7,8 @@ import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.MessageSource;
 import org.jetbrains.annotations.NotNull;
-import top.shareus.common.constant.BanResWordConstant;
-import top.shareus.common.constant.GroupsConstant;
+import top.shareus.common.core.constant.BanResWordConstant;
+import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.util.LogUtils;
 
 /**
@@ -23,7 +23,7 @@ public class ResChatEvent extends SimpleListenerHost {
     private void onAdminGroupMessageEvent(GroupMessageEvent event) {
         long id = event.getGroup().getId();
         Long rLong = GroupsConstant.RES_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
-    
+        
         if (ObjectUtil.isNotNull(rLong)) {
             if (BanResWordConstant.hasBanWord(event.getMessage().contentToString())) {
                 // 禁它言

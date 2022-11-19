@@ -66,4 +66,20 @@ public class MessageChainUtils {
         }
         return null;
     }
+    
+    /**
+     * 获取文件信息
+     *
+     * @param messages 消息
+     *
+     * @return {@code FileMessage}
+     */
+    public static FileMessage fetchFileMessage(MessageChain messages) {
+        for (Message message : messages) {
+            if (message instanceof FileMessage) {
+                return (FileMessage) message;
+            }
+        }
+        return null;
+    }
 }

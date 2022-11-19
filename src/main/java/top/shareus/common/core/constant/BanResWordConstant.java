@@ -1,4 +1,4 @@
-package top.shareus.common.constant;
+package top.shareus.common.core.constant;
 
 import cn.hutool.core.util.StrUtil;
 import top.shareus.CheckMember;

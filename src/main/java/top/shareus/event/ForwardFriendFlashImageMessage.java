@@ -12,7 +12,7 @@ import net.mamoe.mirai.message.data.FlashImage;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.jetbrains.annotations.NotNull;
-import top.shareus.common.constant.GroupsConstant;
+import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.util.LogUtils;
 import top.shareus.util.MessageChainUtils;
 

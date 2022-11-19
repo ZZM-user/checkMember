@@ -10,7 +10,7 @@ import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.Image;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.jetbrains.annotations.NotNull;
-import top.shareus.common.constant.GroupsConstant;
+import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.util.ImageUtils;
 import top.shareus.util.LogUtils;
 
