@@ -100,7 +100,7 @@ public class ArchivedResFile extends SimpleListenerHost {
         if (len > 0) {
             ArchivedFile archivedFile = new ArchivedFile();
             archivedFile.setId(IdUtil.simpleUUID());
-            archivedFile.setName(file.getName().substring(0, file.getName().indexOf(".") + 1));
+            archivedFile.setName(file.getName());
             archivedFile.setSize(file.getSize() / 1024 / 1024);
             archivedFile.setMd5(String.valueOf(ByteUtil.bytesToLong(file.getMd5())));
             archivedFile.setArchiveUrl(archiveUrl);
