@@ -136,7 +136,7 @@ public class AlistUtils {
         }
         
         LogUtils.info("Alist Token：" + exists + " 已存入Redis");
-        return exists;
+        return token;
     }
     
     /**
