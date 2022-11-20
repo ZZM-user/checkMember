@@ -2,6 +2,7 @@ package top.shareus.util;
 
 import com.baomidou.mybatisplus.core.MybatisConfiguration;
 import com.baomidou.mybatisplus.core.MybatisSqlSessionFactoryBuilder;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.SqlSession;
@@ -30,6 +31,11 @@ public class MybatisPlusUtils {
         }
     }
     
+    /**
+     * init sql会话工厂
+     *
+     * @return {@code SqlSessionFactory}
+     */
     public static SqlSessionFactory initSqlSessionFactory() {
         DataSource dataSource = dataSource();
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
@@ -40,6 +46,11 @@ public class MybatisPlusUtils {
         return new MybatisSqlSessionFactoryBuilder().build(configuration);
     }
     
+    /**
+     * 数据源
+     *
+     * @return {@code DataSource}
+     */
     public static DataSource dataSource() {
         SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
         dataSource.setDriverClass(com.mysql.cj.jdbc.Driver.class);
@@ -47,5 +58,21 @@ public class MybatisPlusUtils {
         dataSource.setUsername("root");
         dataSource.setPassword("ZJL20010516");
         return dataSource;
+    }
+    
+    /**
+     * 得到映射器
+     *
+     * @param tClass t类
+     *
+     * @return {@code T}
+     */
+    public static <T extends BaseMapper> T getMapper(Class<T> tClass) {
+        try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
+            return session.getMapper(tClass);
+        } catch (Exception e) {
+            LogUtils.error(e);
+            throw new RuntimeException("Mybatis-Plus getMapper()获取失败");
+        }
     }
 }

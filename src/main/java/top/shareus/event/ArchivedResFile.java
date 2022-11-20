@@ -12,7 +12,6 @@ import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.FileMessage;
 import net.mamoe.mirai.message.data.MessageChain;
-import org.apache.ibatis.session.SqlSession;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.common.domain.ArchivedFile;
@@ -66,17 +65,14 @@ public class ArchivedResFile extends SimpleListenerHost {
                 LogUtils.info("归档路径：" + archivedFile.getArchiveUrl());
                 String uploadFilePath = AlistUtils.uploadFile(file);
                 if (StrUtil.isNotBlank(uploadFilePath)) {
-                    // 将信息 写入数据库
+                    // 完善信息
                     archivedFile.setArchiveUrl(uploadFilePath);
                     archivedFile.setArchiveDate(new Date());
-                    long sender = event.getSender().getId();
-                    archivedFile.setSenderId(sender);
-                    try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
-                        ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
-                        mapper.insert(archivedFile);
-                    } catch (Exception e) {
-                        LogUtils.error(e);
-                    }
+                    archivedFile.setSenderId(event.getSender().getId());
+                    LogUtils.info(archivedFile.toString());
+                    // 将信息 写入数据库
+                    ArchivedFileMapper mapper = MybatisPlusUtils.getMapper(ArchivedFileMapper.class);
+                    mapper.insert(archivedFile);
                 }
                 LogUtils.info(archivedFile.getName() + " 存档完成！");
             }
