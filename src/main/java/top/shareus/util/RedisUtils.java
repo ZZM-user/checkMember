@@ -33,6 +33,7 @@ public class RedisUtils {
             LogUtils.error("获取Jedis实例失败！");
         }
         
+        jedis.select(8);
         return jedis;
     }
 }
