@@ -14,7 +14,7 @@ dependencies {
     implementation 'org.springframework:spring-jdbc:5.3.23'
 }
 group = 'top.shareus'
-version = '0.2.0'
+version = '0.2.1'
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }

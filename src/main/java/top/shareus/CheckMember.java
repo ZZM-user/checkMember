@@ -20,7 +20,7 @@ public final class CheckMember extends JavaPlugin {
     public static final CheckMember INSTANCE = new CheckMember();
     
     private CheckMember() {
-        super(new JvmPluginDescriptionBuilder("top.shareus", "0.2.0")
+        super(new JvmPluginDescriptionBuilder("top.shareus", "0.2.1")
                       .name("checkMember")
                       .author("Baidu")
                       .info("百度定制群管插件")
@@ -39,11 +39,13 @@ public final class CheckMember extends JavaPlugin {
         CommandManager.INSTANCE.registerCommand(InvalidMemberCommand.INSTANCE, true);
         CommandManager.INSTANCE.registerCommand(ClearGroupMemberCommand.INSTANCE, true);
         CommandManager.INSTANCE.registerCommand(FindInfoByQQNumber.INSTANCE, true);
+        
         GlobalEventChannel.INSTANCE.registerListenerHost(new ResChatEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new OrderListEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new HasMemberJoinEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardAdminMessage());
         GlobalEventChannel.INSTANCE.registerListenerHost(new ArchivedResFile());
+        GlobalEventChannel.INSTANCE.registerListenerHost(new QueryArchivedResFile());
         // 好友闪照转发 预留 不开启
         // GlobalEventChannel.INSTANCE.registerListenerHost(new ForwardFriendFlashImageMessage());
         getLogger().info(getDescription().getInfo() + " " + getDescription().getVersion() + " 已启动!");

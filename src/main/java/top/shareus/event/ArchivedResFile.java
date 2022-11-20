@@ -12,6 +12,7 @@ import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.FileMessage;
 import net.mamoe.mirai.message.data.MessageChain;
+import org.apache.ibatis.session.SqlSession;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.common.domain.ArchivedFile;
@@ -38,7 +39,7 @@ public class ArchivedResFile extends SimpleListenerHost {
     public static final String FILE_DOWNLOAD_PATH = "/opt/download/groupFile/";
     
     @EventHandler
-    private void archivedResFileEvent(GroupMessageEvent event) {
+    private void onArchivedResFileEvent(GroupMessageEvent event) {
         long id = event.getGroup().getId();
         Long aLong = GroupsConstant.RES_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
         Long tLong = GroupsConstant.TEST_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
@@ -71,8 +72,12 @@ public class ArchivedResFile extends SimpleListenerHost {
                     archivedFile.setSenderId(event.getSender().getId());
                     LogUtils.info(archivedFile.toString());
                     // 将信息 写入数据库
-                    ArchivedFileMapper mapper = MybatisPlusUtils.getMapper(ArchivedFileMapper.class);
-                    mapper.insert(archivedFile);
+                    try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
+                        ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
+                        mapper.insert(archivedFile);
+                    } catch (Exception e) {
+                        LogUtils.error(e);
+                    }
                 }
                 LogUtils.info(archivedFile.getName() + " 存档完成！");
             }
@@ -99,7 +104,7 @@ public class ArchivedResFile extends SimpleListenerHost {
             ArchivedFile archivedFile = new ArchivedFile();
             archivedFile.setId(IdUtil.simpleUUID());
             archivedFile.setName(file.getName());
-            archivedFile.setSize(file.getSize() / 1024 / 1024);
+            archivedFile.setSize(file.getSize());
             archivedFile.setMd5(String.valueOf(ByteUtil.bytesToLong(file.getMd5())));
             archivedFile.setArchiveUrl(archiveUrl);
             archivedFile.setOriginUrl(file.getUrl());

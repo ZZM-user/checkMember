@@ -52,6 +52,22 @@ public class MessageChainUtils {
     }
     
     /**
+     * 获取普通文本信息
+     *
+     * @param messages 消息
+     *
+     * @return {@link PlainText}
+     */
+    public static PlainText fetchPlainText(MessageChain messages) {
+        for (Message message : messages) {
+            if (message instanceof PlainText) {
+                return (PlainText) message;
+            }
+        }
+        return null;
+    }
+    
+    /**
      * 获取闪照信息
      *
      * @param messages 消息

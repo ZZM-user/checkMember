@@ -51,6 +51,6 @@ public class ForwardFriendFlashImageMessage extends SimpleListenerHost {
     
     @Override
     public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
-        LogUtils.error(context + "\n" + exception.getCause().getMessage());
+        LogUtils.error(context + "\n" + exception.getMessage() + "\n" + exception.getCause().getMessage());
     }
 }

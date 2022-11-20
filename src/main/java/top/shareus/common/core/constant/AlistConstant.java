@@ -1,7 +1,7 @@
 package top.shareus.common.core.constant;
 
 /**
- * Alist 产量
+ * Alist 常量
  *
  * @author 17602
  * @date 2022/11/19

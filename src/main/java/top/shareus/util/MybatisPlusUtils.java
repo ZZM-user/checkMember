@@ -14,6 +14,8 @@ import top.shareus.common.mapper.ArchivedFileMapper;
 import javax.sql.DataSource;
 
 /**
+ * mybatis-plus 工具类
+ *
  * @author 17602
  * @date 2022/11/19
  */
