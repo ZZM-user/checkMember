@@ -1,7 +1,6 @@
 package top.shareus.util;
 
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -9,6 +8,7 @@ import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONUtil;
 import top.shareus.common.core.constant.ShortUrlConstant;
 
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -38,7 +38,7 @@ public class ShortUrlUtils {
     public static String generateShortUrl(String longUrl) {
         HashMap<String, String> map = new HashMap(1) {{
             put("url", longUrl);
-            put("expiry", DateTime.now().offset(DateField.HOUR, 2));
+            put("expiry", DateUtil.offsetDay(new Date(), 1));
         }};
         
         HttpResponse response = HttpRequest.post(ShortUrlConstant.ADD_API)
