@@ -65,10 +65,10 @@ public class QueryArchivedResFile extends SimpleListenerHost {
         // 查到了书目信息 构建消息链
         MessageChainBuilder builder = new MessageChainBuilder();
         builder.add(new At(event.getSender().getId()));
-        builder.add("\n小度为你查到了以下内容：\n");
+        builder.add("\n小度为你查到了以下内容：");
         
         archivedFiles.forEach(a -> {
-            builder.add("名称：" + a.getName() + "\n" + "下载地址：" + ShortUrlUtils.generateShortUrl(a.getArchiveUrl()));
+            builder.add("\n名称：" + a.getName() + "\n" + "下载地址：" + ShortUrlUtils.generateShortUrl(a.getArchiveUrl()));
         });
         event.getGroup().sendMessage(builder.build());
     }
@@ -127,6 +127,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
     private List<ArchivedFile> findBookInfoByName(String name) {
         QueryWrapper<ArchivedFile> wrapper = new QueryWrapper<>();
         wrapper.like(StrUtil.isNotBlank(name), "name", name);
+        wrapper.last("limit 5");
         List<ArchivedFile> archivedFiles = null;
         
         try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
