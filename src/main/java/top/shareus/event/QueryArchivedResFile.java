@@ -59,7 +59,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
 
         boolean warring = checkWarring(event);
         if (warring) {
-            LogUtils.error(event.getSender().getNameCard() + "/" + event.getSender().getId() + " 求文次数非正常！");
+            LogUtils.error(event.getSender().getNameCard() + "/" + event.getSender().getId() + " 求文次数异常！");
             return;
         }
         String bookName = extractBookInfo(plainText);
@@ -93,18 +93,18 @@ public class QueryArchivedResFile extends SimpleListenerHost {
 
         String oldValue = jedis.get(key);
         if (ObjectUtil.isNotNull(oldValue)) {
-            if (Long.parseLong(oldValue) > QiuWenConstant.MAX_TIMES_OF_DAY) {
+            jedis.incr(key);
+
+            if (Long.parseLong(oldValue) >= QiuWenConstant.MAX_TIMES_OF_DAY) {
                 Bot bot = BotManager.getBot();
                 Group group = bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0));
 //                Group group = bot.getGroup(GroupsConstant.TEST_GROUPS.get(0));
                 group.sendMessage("请注意 【" + event.getSender().getId() + event.getSender().getNameCard() + "】该用户今日已求文 " + oldValue + " 次");
                 return true;
-            } else {
-                jedis.incr(key);
-                return false;
             }
+        } else {
+            jedis.setex(key, QiuWenConstant.getExpireTime(), "1");
         }
-        jedis.setex(key, QiuWenConstant.getExpireTime(), "1");
         return false;
     }
 
