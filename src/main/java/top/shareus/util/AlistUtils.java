@@ -129,10 +129,11 @@ public class AlistUtils {
         String exists = jedis.setex(AlistConstant.AUTH_REDIS_KEY, AlistConstant.AUTH_REDIS_EXPIRE, token);
 
         if (StrUtil.isBlank(exists)) {
-            throw new RuntimeException("Alist 存储登录token失败: " + token);
+            LogUtils.error("Alist 存储登录token失败: " + token);
+        } else {
+            LogUtils.info("Alist Token：" + exists + " 已存入Redis");
         }
 
-        LogUtils.info("Alist Token：" + exists + " 已存入Redis");
         return token;
     }
 
