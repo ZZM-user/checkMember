@@ -19,10 +19,10 @@ public class RedisUtils {
 
     static {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(10);
-        jedisPoolConfig.setMaxIdle(8);
-        jedisPoolConfig.setMinIdle(2);
-        jedisPoolConfig.setMaxWait(Duration.ofMillis(2000));
+        jedisPoolConfig.setMaxTotal(50);
+        jedisPoolConfig.setMaxIdle(30);
+        jedisPoolConfig.setMinIdle(8);
+        jedisPoolConfig.setMaxWait(Duration.ofMillis(3000));
         jedisPool = new JedisPool(jedisPoolConfig, "124.220.67.51", 6379, null, "ZJL20010516");
     }
 

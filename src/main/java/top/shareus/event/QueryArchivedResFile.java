@@ -157,9 +157,13 @@ public class QueryArchivedResFile extends SimpleListenerHost {
      * @return {@code List<ArchivedFile>}
      */
     private List<ArchivedFile> findBookInfoByName(String name) {
+        if (StrUtil.isBlank(name)) {
+            return null;
+        }
+
         QueryWrapper<ArchivedFile> wrapper = new QueryWrapper<>();
         wrapper.like(StrUtil.isNotBlank(name), "name", name);
-        wrapper.last("limit 5");
+        wrapper.last("limit 10");
         List<ArchivedFile> archivedFiles = null;
 
         try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {

@@ -71,12 +71,17 @@ public class AlistUtils {
         String encodePath = URLEncodeUtil.encode(uploadPath);
         LogUtils.info("流：" + bytes.length + "\t编码串：" + encodePath);
 
-        HttpResponse response = HttpRequest.put(AlistConstant.UPLOAD_FILE_API)
-                .header("file-path", encodePath)
-                .header("authorization", getAuthorization())
-                .body(bytes)
-                .execute().sync();
+        HttpResponse response = null;
+        try {
+            response = HttpRequest.put(AlistConstant.UPLOAD_FILE_API)
+                    .header("file-path", encodePath)
+                    .header("authorization", getAuthorization())
+                    .body(bytes)
+                    .execute().sync();
 
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         LogUtils.info("上传文件 结束 " + response.body());
 
         if (HttpStatus.HTTP_OK == response.getStatus()) {
@@ -117,7 +122,6 @@ public class AlistUtils {
         String token = jedis.get(AlistConstant.AUTH_REDIS_KEY);
         if (StrUtil.isNotBlank(token)) {
             LogUtils.info("无需更新 token");
-            jedis.close();
             return token;
         }
 
