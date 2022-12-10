@@ -36,14 +36,8 @@ public class Day implements Task {
         if (hasArchived < 10) {
         }
         Bot bot = BotManager.getBot();
-        Group group = null;
-        // 小于 10 估计出问题了
-        if (hasArchived < 10) {
-            builder.add(new At(2657272578L));
-            group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
-        } else {
-            group = bot.getGroupOrFail(GroupsConstant.ADMIN_GROUPS.get(0));
-        }
+        builder.add(new At(2657272578L));
+        Group group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
         LogUtils.info(builder.build().toString());
         group.sendMessage(builder.build());
     }

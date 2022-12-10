@@ -118,19 +118,22 @@ public class AlistUtils {
      */
     private static String getAuthorization() {
         LogUtils.info("开始获取Alist授权");
-        Jedis jedis = RedisUtils.getJedis();
-        String token = jedis.get(AlistConstant.AUTH_REDIS_KEY);
-        if (StrUtil.isNotBlank(token)) {
-            LogUtils.info("无需更新 token");
-            return token;
+        String token;
+        String exists;
+        try (Jedis jedis = RedisUtils.getJedis()) {
+            token = jedis.get(AlistConstant.AUTH_REDIS_KEY);
+            if (StrUtil.isNotBlank(token)) {
+                LogUtils.info("无需更新 token");
+                return token;
+            }
+
+            LogUtils.info("需要更新 token");
+            // token已经失效 需要重新登录 登录后再存到redis里
+            token = login().trim();
+            LogUtils.info("获取Alist Token：" + token);
+
+            exists = jedis.setex(AlistConstant.AUTH_REDIS_KEY, AlistConstant.AUTH_REDIS_EXPIRE, token);
         }
-
-        LogUtils.info("需要更新 token");
-        // token已经失效 需要重新登录 登录后再存到redis里
-        token = login().trim();
-        LogUtils.info("获取Alist Token：" + token);
-
-        String exists = jedis.setex(AlistConstant.AUTH_REDIS_KEY, AlistConstant.AUTH_REDIS_EXPIRE, token);
 
         if (StrUtil.isBlank(exists)) {
             LogUtils.error("Alist 存储登录token失败: " + token);

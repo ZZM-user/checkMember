@@ -52,8 +52,8 @@ public class Week implements Task {
         builder.add("\n大家继续努力！");
 
         Bot bot = BotManager.getBot();
-        Group group = bot.getGroupOrFail(GroupsConstant.ADMIN_GROUPS.get(0));
-//        Group group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
+//        Group group = bot.getGroupOrFail(GroupsConstant.ADMIN_GROUPS.get(0));
+        Group group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
         LogUtils.info(builder.build().toString());
         group.sendMessage(builder.build());
     }

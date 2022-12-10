@@ -19,7 +19,7 @@ public class RedisUtils {
 
     static {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(50);
+        jedisPoolConfig.setMaxTotal(80);
         jedisPoolConfig.setMaxIdle(30);
         jedisPoolConfig.setMinIdle(8);
         jedisPoolConfig.setMaxWait(Duration.ofMillis(3000));
