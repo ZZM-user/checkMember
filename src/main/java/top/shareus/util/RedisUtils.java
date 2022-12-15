@@ -23,6 +23,7 @@ public class RedisUtils {
         jedisPoolConfig.setMaxIdle(30);
         jedisPoolConfig.setMinIdle(8);
         jedisPoolConfig.setMaxWait(Duration.ofMillis(3000));
+        jedisPoolConfig.setNumTestsPerEvictionRun(-1);
         jedisPool = new JedisPool(jedisPoolConfig, "124.220.67.51", 6379, null, "ZJL20010516");
     }
 

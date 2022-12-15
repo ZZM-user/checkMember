@@ -9,7 +9,7 @@ import net.mamoe.mirai.message.data.*;
  * @date 2022/10/29 22:13
  **/
 public class MessageChainUtils {
-    
+
     /**
      * 提取消息
      *
@@ -50,52 +50,36 @@ public class MessageChainUtils {
             }
         }
     }
-    
+
     /**
      * 获取普通文本信息
      *
      * @param messages 消息
-     *
      * @return {@link PlainText}
      */
-    public static PlainText fetchPlainText(MessageChain messages) {
-        for (Message message : messages) {
-            if (message instanceof PlainText) {
-                return (PlainText) message;
-            }
-        }
-        return null;
+    public static PlainText fetchPlainText(MessageChain chain) {
+        return (PlainText) chain.stream().filter(PlainText.class::isInstance).findFirst().orElse(null);
+
     }
-    
+
     /**
      * 获取闪照信息
      *
      * @param messages 消息
-     *
      * @return {@link FlashImage}
      */
-    public static FlashImage fetchFlashImage(MessageChain messages) {
-        for (Message message : messages) {
-            if (message instanceof FlashImage) {
-                return (FlashImage) message;
-            }
-        }
-        return null;
+    public static FlashImage fetchFlashImage(MessageChain chain) {
+        return (FlashImage) chain.stream().filter(FlashImage.class::isInstance).findFirst().orElse(null);
     }
-    
+
     /**
      * 获取文件信息
      *
      * @param messages 消息
-     *
      * @return {@code FileMessage}
      */
-    public static FileMessage fetchFileMessage(MessageChain messages) {
-        for (Message message : messages) {
-            if (message instanceof FileMessage) {
-                return (FileMessage) message;
-            }
-        }
-        return null;
+    public static FileMessage fetchFileMessage(MessageChain chain) {
+        return (FileMessage) chain.stream().filter(FileMessage.class::isInstance).findFirst().orElse(null);
+
     }
 }

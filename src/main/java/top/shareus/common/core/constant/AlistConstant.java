@@ -31,13 +31,13 @@ public class AlistConstant {
     /**
      * 登录token redis Key值
      */
-    public static final String AUTH_REDIS_KEY = "Alist-auth";
+    public static final String AUTH_REDIS_KEY = "alist-auth-token";
 
     /**
      * 登录token redis 有效期
      * 默认 48h，缩小一定时间为 47
      */
-    public static final Long AUTH_REDIS_EXPIRE = 47 * 600L;
+    public static final Long AUTH_REDIS_EXPIRE = 24 * 3600L;
 
     /**
      * 上传文件api

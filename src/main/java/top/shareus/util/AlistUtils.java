@@ -120,6 +120,7 @@ public class AlistUtils {
         LogUtils.info("开始获取Alist授权");
         String token;
         String exists;
+
         try (Jedis jedis = RedisUtils.getJedis()) {
             token = jedis.get(AlistConstant.AUTH_REDIS_KEY);
             if (StrUtil.isNotBlank(token)) {
@@ -138,7 +139,7 @@ public class AlistUtils {
         if (StrUtil.isBlank(exists)) {
             LogUtils.error("Alist 存储登录token失败: " + token);
         } else {
-            LogUtils.info("Alist Token：" + exists + " 已存入Redis");
+            LogUtils.info("Alist-Token：" + exists + " 已存入Redis");
         }
 
         return token;

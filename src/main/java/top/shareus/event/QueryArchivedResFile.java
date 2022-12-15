@@ -1,5 +1,6 @@
 package top.shareus.event;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
@@ -24,6 +25,7 @@ import top.shareus.common.domain.ArchivedFile;
 import top.shareus.common.mapper.ArchivedFileMapper;
 import top.shareus.util.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -51,34 +53,40 @@ public class QueryArchivedResFile extends SimpleListenerHost {
         }
 
         MessageChain message = event.getMessage();
-        PlainText plainText = MessageChainUtils.fetchPlainText(message);
-        // 不包含 求文 不管
-        if (ObjectUtil.isNull(plainText) || !isQiuWen(plainText)) {
-            return;
+        try {
+            PlainText plainText = MessageChainUtils.fetchPlainText(message);
+            // 不包含 求文 不管
+            if (!isQiuWen(plainText)) {
+                return;
+            }
+
+            if (checkWarring(event)) {
+                LogUtils.error(event.getSender().getNameCard() + "/" + event.getSender().getId() + " 求文次数异常！");
+                return;
+            }
+
+            String bookName = extractBookInfo(plainText);
+
+            List<ArchivedFile> archivedFiles = findBookInfoByName(bookName);
+
+            if (CollUtil.isEmpty(archivedFiles)) {
+                LogUtils.info("没查到关于：" + bookName + " 的库存信息");
+                return;
+            }
+
+            // 查到了书目信息 构建消息链
+            MessageChainBuilder builder = new MessageChainBuilder();
+            builder.add(new At(event.getSender().getId()));
+            builder.add("\n小度为你找到了以下内容：");
+
+            archivedFiles.forEach(a ->
+                    builder.add("\n名称：" + a.getName() + "\n" + "下载地址：" + ShortUrlUtils.generateShortUrl(a.getArchiveUrl()))
+            );
+
+            event.getGroup().sendMessage(builder.build());
+        } catch (Exception e) {
+            LogUtils.error(e);
         }
-
-        boolean warring = checkWarring(event);
-        if (warring) {
-            LogUtils.error(event.getSender().getNameCard() + "/" + event.getSender().getId() + " 求文次数异常！");
-            return;
-        }
-        String bookName = extractBookInfo(plainText);
-        List<ArchivedFile> archivedFiles = findBookInfoByName(bookName);
-
-        if (ObjectUtil.isNull(archivedFiles) || archivedFiles.size() <= 0) {
-            LogUtils.info("没查到关于：" + bookName + " 的库存信息");
-            return;
-        }
-
-        // 查到了书目信息 构建消息链
-        MessageChainBuilder builder = new MessageChainBuilder();
-        builder.add(new At(event.getSender().getId()));
-        builder.add("\n小度为你查到了以下内容：");
-
-        archivedFiles.forEach(a -> {
-            builder.add("\n名称：" + a.getName() + "\n" + "下载地址：" + ShortUrlUtils.generateShortUrl(a.getArchiveUrl()));
-        });
-        event.getGroup().sendMessage(builder.build());
     }
 
     /**
@@ -98,13 +106,13 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             if (Long.parseLong(oldValue) >= QiuWenConstant.MAX_TIMES_OF_DAY) {
                 Bot bot = BotManager.getBot();
                 Group group = bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0));
-//                Group group = bot.getGroup(GroupsConstant.TEST_GROUPS.get(0));
                 group.sendMessage("请注意 【" + event.getSender().getId() + event.getSender().getNameCard() + "】该用户今日已求文 " + oldValue + " 次");
                 return true;
             }
         } else {
             jedis.setex(key, QiuWenConstant.getExpireTime(), "1");
         }
+
         return false;
     }
 
@@ -115,6 +123,10 @@ public class QueryArchivedResFile extends SimpleListenerHost {
      * @return boolean
      */
     private boolean isQiuWen(PlainText plainText) {
+        if (ObjectUtil.isNull(plainText)) {
+            return false;
+        }
+
         String content = plainText.getContent();
         if (content.length() > 50) {
             LogUtils.info("这哪是求文啊，发公告呢吧……" + content.length());
@@ -134,12 +146,17 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             return "";
         }
 
-        String content = plainText.getContent();
-
         // 匹配 《书名》
-        String result = ReUtil.get("《(.*)》", content, 0)
+        String result = ReUtil.get("[求文](.*)", plainText.getContent(), 0)
+                .replace("求文", "")
+                .replace(":", "")
+                .replace("：", "")
                 .replace("《", "")
-                .replace("》", "");
+                .replace("》", "")
+                .replace("\n", "")
+                .replaceFirst("[by|作者](.*)", "")
+                .trim();
+
         // 太长折半
         if (result.length() > 10) {
             result = result.substring(0, result.length() / 2);
@@ -172,11 +189,12 @@ public class QueryArchivedResFile extends SimpleListenerHost {
         } catch (Exception e) {
             LogUtils.error(e);
         }
-        if (archivedFiles.size() <= 0) {
+        if (CollUtil.isEmpty(archivedFiles)) {
+            LogUtils.info("查不到相关内容");
             return null;
         }
 
-        LogUtils.info("查询到名为：" + name + " 的书目，共：" + archivedFiles.size() + " 条\n" + archivedFiles.toArray().toString());
+        LogUtils.info("查询到名为：" + name + " 的书目，共：" + archivedFiles.size() + " 条\n" + Arrays.toString(archivedFiles.toArray()));
         return archivedFiles;
     }
 

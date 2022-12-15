@@ -13,7 +13,7 @@ public class QiuWenConstant {
     /**
      * 求文Redis键
      */
-    public static final String QIU_WEN_REDIS_KEY = "QiuWen";
+    public static final String QIU_WEN_REDIS_KEY = "QiuWen: ";
 
     /**
      * 每天求文最大次数
