@@ -16,7 +16,7 @@ public class LogUtils {
      * @param message 消息
      */
     public static void info(String message) {
-//        CheckMember.INSTANCE.getLogger().info(message);
+        CheckMember.INSTANCE.getLogger().info(message);
     }
 
     /**
