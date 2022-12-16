@@ -35,12 +35,6 @@ import java.util.List;
  */
 public class QueryArchivedResFile extends SimpleListenerHost {
 
-    /**
-     * 存档文件映射器
-     */
-    private static ArchivedFileMapper archivedFileMapper = MybatisPlusUtils.getMapper(ArchivedFileMapper.class);
-
-
     @EventHandler
     private void onQueryArchivedResFile(GroupMessageEvent event) {
         long id = event.getGroup().getId();
@@ -178,7 +172,8 @@ public class QueryArchivedResFile extends SimpleListenerHost {
         }
 
         QueryWrapper<ArchivedFile> wrapper = new QueryWrapper<>();
-        wrapper.like(StrUtil.isNotBlank(name), "name", name);
+        wrapper.like("name", name);
+        wrapper.orderByAsc("archive_date");
         wrapper.last("limit 10");
         List<ArchivedFile> archivedFiles = null;
 
