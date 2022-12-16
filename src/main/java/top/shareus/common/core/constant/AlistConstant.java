@@ -53,4 +53,5 @@ public class AlistConstant {
      * 新建目录 api
      */
     public static final String MKDIR_API = DOMAIN + "/api/fs/mkdir";
+    public static final String LS_API = DOMAIN + "/api/fs/list";
 }

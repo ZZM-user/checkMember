@@ -1,7 +1,10 @@
 package top.shareus.util;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.net.URLEncodeUtil;
 import cn.hutool.core.util.ReUtil;
@@ -10,11 +13,18 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import redis.clients.jedis.Jedis;
 import top.shareus.common.core.constant.AlistConstant;
+import top.shareus.common.domain.ArchivedFile;
+import top.shareus.common.mapper.ArchivedFileMapper;
 
 import java.io.File;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Alist 工具类
@@ -30,6 +40,58 @@ public class AlistUtils {
     private static final String JWT_REGEX = "\"(e.+?)\"";
 
     public static final String JSON = "application/json; charset=utf-8";
+
+    public static void main(String[] args) {
+        ArrayList<String> pathList = new ArrayList() {{
+//            add("/OneDrive/群文件/2022/2022.5");
+//            add("/OneDrive/群文件/2022/06");
+//            add("/OneDrive/群文件/2022/07");
+//            add("/OneDrive/群文件/2022/08");
+//            add("/OneDrive/群文件/2022/09");
+//            add("/OneDrive/群文件/小说");
+        }};
+
+        ArchivedFileMapper mapper = MybatisPlusUtils.getMapper(ArchivedFileMapper.class);
+
+        pathList.forEach(path -> {
+            for (int i = 1; i < 50; i++) {
+                String body = ls(path, i);
+                Map map = JSONUtil.toBean(body, Map.class);
+                Map data = (Map) map.get("data");
+//                Integer total = (Integer) data.get("total");
+                List<Map> content;
+                try {
+                    content = (List<Map>) data.get("content");
+                } catch (Exception e) {
+                    System.out.println(body);
+                    return;
+                }
+                if (content == null) {
+                    return;
+                }
+                content.forEach(c -> {
+                    String name = (String) c.get("name");
+                    ArchivedFile file = new ArchivedFile();
+                    file.setName(name);
+                    String modified = (String) c.get("modified");
+                    String format = LocalDateTimeUtil.format(LocalDateTime.parse(modified.substring(0, modified.length() - 1)), DatePattern.NORM_DATETIME_PATTERN);
+                    file.setArchiveDate(DateUtil.parse(format));
+                    file.setArchiveUrl(AlistConstant.DOMAIN + path + '/' + name);
+                    Integer size = (Integer) c.get("size");
+                    file.setSize(Long.valueOf(size));
+
+                    QueryWrapper<ArchivedFile> wrapper = new QueryWrapper<>();
+                    wrapper.eq("name", name);
+                    List<ArchivedFile> archivedFiles = mapper.selectList(wrapper);
+                    if (CollUtil.isEmpty(archivedFiles)) {
+                        mapper.insert(file);
+                    }
+                    System.out.println(file);
+                });
+            }
+
+        });
+    }
 
     /**
      * 登录
@@ -90,6 +152,49 @@ public class AlistUtils {
         }
 
         throw new RuntimeException("Alist文件上传失败:" + uploadPath + "\t" + response.body());
+    }
+
+    /**
+     * 获取目录文件信息
+     *
+     * @param dir  dir
+     * @param page 页面
+     * @return {@link String}
+     */
+    public static String ls(String dir, Integer page) {
+        return ls(dir, "", page, false);
+    }
+
+    /**
+     * 获取目录文件信息
+     *
+     * @param dir       dir
+     * @param password  密码
+     * @param page      页面
+     * @param isRefresh 是否刷新
+     * @return {@link String}
+     */
+    public static String ls(String dir, String password, Integer page, boolean isRefresh) {
+
+        HashMap<String, Object> map = new HashMap() {{
+            put("path", dir);
+            put("password", password);
+            put("page", page);
+            put("per_page", 30);
+            put("refresh", isRefresh);
+        }};
+
+        HttpResponse response = HttpRequest.post(AlistConstant.LS_API)
+                .body(JSONUtil.toJsonPrettyStr(map), JSON)
+                .header("authorization", getAuthorization())
+                .execute().sync();
+
+        if (HttpStatus.HTTP_OK == response.getStatus()) {
+            LogUtils.info("获取文件夹：" + dir + "\n" + response.body());
+            return response.body();
+        }
+
+        throw new RuntimeException("获取文件夹信息失败：" + dir);
     }
 
     /**

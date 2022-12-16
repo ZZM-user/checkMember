@@ -9,16 +9,16 @@ import top.shareus.CheckMember;
  * @date 2022/10/29 17:27
  */
 public class LogUtils {
-    
+
     /**
      * 信息
      *
      * @param message 消息
      */
     public static void info(String message) {
-        CheckMember.INSTANCE.getLogger().info(message);
+//        CheckMember.INSTANCE.getLogger().info(message);
     }
-    
+
     /**
      * 调试
      *
@@ -27,7 +27,7 @@ public class LogUtils {
     public static void debug(String message) {
         CheckMember.INSTANCE.getLogger().debug(message);
     }
-    
+
     /**
      * 警告
      *
@@ -36,7 +36,7 @@ public class LogUtils {
     public static void warning(String message) {
         CheckMember.INSTANCE.getLogger().warning(message);
     }
-    
+
     /**
      * 错误
      *
@@ -45,7 +45,7 @@ public class LogUtils {
     public static void error(String message) {
         CheckMember.INSTANCE.getLogger().error(message);
     }
-    
+
     /**
      * 错误
      *
@@ -54,5 +54,5 @@ public class LogUtils {
     public static void error(Throwable throwable) {
         CheckMember.INSTANCE.getLogger().error(throwable);
     }
-    
+
 }

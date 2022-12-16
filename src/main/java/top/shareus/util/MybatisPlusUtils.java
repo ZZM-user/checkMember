@@ -20,9 +20,9 @@ import javax.sql.DataSource;
  * @date 2022/11/19
  */
 public class MybatisPlusUtils {
-    
+
     public static final SqlSessionFactory sqlSessionFactory = initSqlSessionFactory();
-    
+
     /**
      * init sql会话工厂
      *
@@ -38,7 +38,7 @@ public class MybatisPlusUtils {
         configuration.setLogImpl(StdOutImpl.class);
         return new MybatisSqlSessionFactoryBuilder().build(configuration);
     }
-    
+
     /**
      * 数据源
      *
@@ -52,16 +52,16 @@ public class MybatisPlusUtils {
         dataSource.setPassword("ZJL20010516");
         return dataSource;
     }
-    
+
     /**
      * 得到映射器
      *
      * @param tClass t类
-     *
      * @return {@code T}
      */
     public static <T> T getMapper(Class<T> tClass) {
-        try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
+        try {
+            SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true);
             return session.getMapper(tClass);
         } catch (Exception e) {
             LogUtils.error(e);
