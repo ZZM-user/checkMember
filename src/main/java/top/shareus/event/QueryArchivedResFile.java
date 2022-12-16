@@ -12,7 +12,6 @@ import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.PlainText;
 import org.apache.ibatis.session.SqlSession;
@@ -52,9 +51,8 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             return;
         }
 
-        MessageChain message = event.getMessage();
         try {
-            PlainText plainText = MessageChainUtils.fetchPlainText(message);
+            PlainText plainText = MessageChainUtils.fetchPlainText(event.getMessage());
             // 不包含 求文 不管
             if (!isQiuWen(plainText)) {
                 return;
@@ -129,7 +127,8 @@ public class QueryArchivedResFile extends SimpleListenerHost {
 
         String content = plainText.getContent();
         if (content.length() > 50) {
-            LogUtils.info("这哪是求文啊，发公告呢吧……" + content.length());
+            LogUtils.info("这哪是求文啊，发公告呢吧…… " + content.length());
+            return false;
         }
 
         return ReUtil.contains("求文", content);
