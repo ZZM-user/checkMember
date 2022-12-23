@@ -62,7 +62,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             List<ArchivedFile> archivedFiles = findBookInfoByName(bookName);
 
             if (CollUtil.isEmpty(archivedFiles)) {
-                LogUtils.info("没查到关于：" + bookName + " 的库存信息");
+                LogUtils.info("没查到关于 [" + bookName + "] 的库存信息");
                 return;
             }
 
@@ -141,13 +141,13 @@ public class QueryArchivedResFile extends SimpleListenerHost {
 
         // 匹配 《书名》
         String result = ReUtil.get("[求文](.*)", plainText.getContent(), 0)
-                .replace("求文", "")
+                .replaceFirst("(求文)|(求)", "")
                 .replace(":", "")
                 .replace("：", "")
                 .replace("《", "")
                 .replace("》", "")
                 .replace("\n", "")
-                .replaceFirst("[by|作者](.*)", "")
+                .replaceFirst("(by)|(作者)(.*)", "")
                 .trim();
 
         // 太长折半
