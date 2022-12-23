@@ -125,7 +125,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             return false;
         }
 
-        return ReUtil.contains("求文", content);
+        return ReUtil.contains("[求文]", content);
     }
 
     /**
