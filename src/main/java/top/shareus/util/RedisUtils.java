@@ -19,12 +19,15 @@ public class RedisUtils {
 
     static {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(80);
-        jedisPoolConfig.setMaxIdle(30);
+        jedisPoolConfig.setMaxTotal(100);
+        jedisPoolConfig.setMaxIdle(100);
         jedisPoolConfig.setMinIdle(8);
-        jedisPoolConfig.setMaxWait(Duration.ofMillis(3000));
+        jedisPoolConfig.setMaxWait(Duration.ofMillis(30000));
         jedisPoolConfig.setNumTestsPerEvictionRun(-1);
-        jedisPool = new JedisPool(jedisPoolConfig, "124.220.67.51", 6379, null, "ZJL20010516");
+        jedisPoolConfig.setTestWhileIdle(true);
+        jedisPoolConfig.setTestOnBorrow(true);
+        jedisPoolConfig.setNumTestsPerEvictionRun(-1);
+        jedisPool = new JedisPool(jedisPoolConfig, "124.220.67.51", 6379, 30000, "ZJL20010516");
     }
 
     public static Jedis getJedis() {
