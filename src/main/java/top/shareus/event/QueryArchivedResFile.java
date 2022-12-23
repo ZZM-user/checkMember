@@ -26,6 +26,7 @@ import top.shareus.util.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.MatchResult;
 
 /**
  * 查询归档res文件
@@ -140,18 +141,30 @@ public class QueryArchivedResFile extends SimpleListenerHost {
         }
 
         // 匹配 《书名》
-        String result = ReUtil.get("[求文](.*)", plainText.getContent(), 0)
-                .replaceFirst("(求文)|(求)", "")
+        String result = ReUtil.get("[求文](.*)", plainText.getContent(), 0);
+
+        // 移除 书括号 / 求文 之后的内容
+        MatchResult matchResultStart = ReUtil.indexOf("(《)|(求文)|(求)", result);
+        if (ObjectUtil.isNotNull(matchResultStart)) {
+            result = result.substring(matchResultStart.start());
+        }
+
+        // 移除 书括号 / 作者 之后的内容
+        MatchResult matchResultEnd = ReUtil.indexOf("(》)|(by)|(作者)", result);
+        if (ObjectUtil.isNotNull(matchResultEnd)) {
+            result = result.substring(0, matchResultEnd.start());
+        }
+
+        // 最后的替换
+        result = result.replaceFirst("(求文)|(求)", "")
                 .replace(":", "")
                 .replace("：", "")
                 .replace("《", "")
-                .replace("》", "")
                 .replace("\n", "")
-                .replaceFirst("(by)|(作者)(.*)", "")
                 .trim();
 
         // 太长折半
-        if (result.length() > 10) {
+        if (result.length() > 30) {
             result = result.substring(0, result.length() / 2);
         }
 
