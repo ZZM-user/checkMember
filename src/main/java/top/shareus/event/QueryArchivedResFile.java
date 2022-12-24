@@ -89,7 +89,17 @@ public class QueryArchivedResFile extends SimpleListenerHost {
      * @return boolean
      */
     private boolean checkWarring(GroupMessageEvent event) {
-        String key = QiuWenConstant.QIU_WEN_REDIS_KEY + event.getSender().getId();
+        long senderId = event.getSender().getId();
+        long groupId = event.getGroup().getId();
+        // 管理组和测试组不管
+        Long tLong = GroupsConstant.TEST_GROUPS.stream().filter(r -> r == groupId).findAny().orElse(null);
+        Long aLong = GroupsConstant.ADMIN_GROUPS.stream().filter(r -> r == groupId).findAny().orElse(null);
+        if (ObjectUtil.isNotNull(tLong) || ObjectUtil.isNotNull(aLong)) {
+            return false;
+        }
+
+        String key = QiuWenConstant.QIU_WEN_REDIS_KEY + senderId;
+
         Jedis jedis = RedisUtils.getJedis();
 
         String oldValue = jedis.get(key);
@@ -99,7 +109,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             if (Long.parseLong(oldValue) >= QiuWenConstant.MAX_TIMES_OF_DAY) {
                 Bot bot = BotManager.getBot();
                 Group group = bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0));
-                group.sendMessage("请注意 【" + event.getSender().getId() + event.getSender().getNameCard() + "】该用户今日已求文 " + oldValue + " 次");
+                group.sendMessage("请注意 【" + senderId + event.getSender().getNameCard() + "】该用户今日已求文 " + oldValue + " 次");
                 return true;
             }
         } else {

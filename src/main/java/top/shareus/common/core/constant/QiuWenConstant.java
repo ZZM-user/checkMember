@@ -1,6 +1,10 @@
 package top.shareus.common.core.constant;
 
-import cn.hutool.core.date.LocalDateTimeUtil;
+import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
+
+import java.util.Date;
 
 /**
  * 求文 常量
@@ -21,16 +25,12 @@ public class QiuWenConstant {
     public static final Long MAX_TIMES_OF_DAY = 5L;
 
     /**
-     * 求文key 到期时间
-     */
-    public static final Long REDIS_KEY_EXPIRE = 24 * 60 * 60L;
-
-    /**
      * 计算到期时间
      *
      * @return {@link Long}
      */
     public static Long getExpireTime() {
-        return REDIS_KEY_EXPIRE - LocalDateTimeUtil.now().getHour() * 60 * 60;
+        // 当天的结束时间戳 - 现在的时间戳
+        return DateUtil.between(DateTime.now(), DateUtil.endOfDay(new Date()), DateUnit.MINUTE, true);
     }
 }
