@@ -75,7 +75,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             archivedFiles.forEach(a ->
                     builder.add("\n名称：" + a.getName() + "\n" + "下载地址：" + ShortUrlUtils.generateShortUrl(a.getArchiveUrl()))
             );
-
+            
             event.getGroup().sendMessage(builder.build());
         } catch (Exception e) {
             LogUtils.error(e);
@@ -152,7 +152,9 @@ public class QueryArchivedResFile extends SimpleListenerHost {
 
         // 匹配 《书名》
         String result = ReUtil.get("[求文](.*)", plainText.getContent(), 0);
-
+        if (StrUtil.isEmpty(result)) {
+            return "";
+        }
         // 移除 书括号 / 求文 之后的内容
         MatchResult matchResultStart = ReUtil.indexOf("(《)|(求文)|(求)", result);
         if (ObjectUtil.isNotNull(matchResultStart)) {
