@@ -160,7 +160,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
         }
 
         // 移除 书括号 / 作者 之后的内容
-        MatchResult matchResultEnd = ReUtil.indexOf("(》)|(by)|(作者)", result);
+        MatchResult matchResultEnd = ReUtil.indexOf("(》)|(by)|(bY)|(By)|(BY)|(作者)", result);
         if (ObjectUtil.isNotNull(matchResultEnd)) {
             result = result.substring(0, matchResultEnd.start());
         }
