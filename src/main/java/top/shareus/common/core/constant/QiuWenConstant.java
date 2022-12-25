@@ -31,6 +31,6 @@ public class QiuWenConstant {
      */
     public static Long getExpireTime() {
         // 当天的结束时间戳 - 现在的时间戳
-        return DateUtil.between(DateTime.now(), DateUtil.endOfDay(new Date()), DateUnit.MINUTE, true);
+        return DateUtil.between(DateTime.now(), DateUtil.endOfDay(new Date()), DateUnit.SECOND, true);
     }
 }

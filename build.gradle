@@ -15,6 +15,7 @@ dependencies {
     implementation 'org.springframework:spring-jdbc:5.3.23'
     implementation 'org.quartz-scheduler:quartz:2.3.2'
     implementation 'org.quartz-scheduler:quartz-jobs:2.3.2'
+    implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 group = 'top.shareus'
 version = '0.2.2'
