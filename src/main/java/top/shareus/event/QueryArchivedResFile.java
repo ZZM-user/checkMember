@@ -75,7 +75,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             archivedFiles.forEach(a ->
                     builder.add("\n名称：" + a.getName() + "\n" + "下载地址：" + ShortUrlUtils.generateShortUrl(a.getArchiveUrl()))
             );
-            
+
             event.getGroup().sendMessage(builder.build());
         } catch (Exception e) {
             LogUtils.error(e);
@@ -100,20 +100,21 @@ public class QueryArchivedResFile extends SimpleListenerHost {
 
         String key = QiuWenConstant.QIU_WEN_REDIS_KEY + senderId;
 
-        Jedis jedis = RedisUtils.getJedis();
+        try (Jedis jedis = RedisUtils.getJedis()) {
 
-        String oldValue = jedis.get(key);
-        if (ObjectUtil.isNotNull(oldValue)) {
-            jedis.incr(key);
+            String oldValue = jedis.get(key);
+            if (ObjectUtil.isNotNull(oldValue)) {
+                jedis.incr(key);
 
-            if (Long.parseLong(oldValue) >= QiuWenConstant.MAX_TIMES_OF_DAY) {
-                Bot bot = BotManager.getBot();
-                Group group = bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0));
-                group.sendMessage("请注意 【" + senderId + event.getSender().getNameCard() + "】该用户今日已求文 " + oldValue + " 次");
-                return true;
+                if (Long.parseLong(oldValue) >= QiuWenConstant.MAX_TIMES_OF_DAY) {
+                    Bot bot = BotManager.getBot();
+                    Group group = bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0));
+                    group.sendMessage("请注意 【" + senderId + event.getSender().getNameCard() + "】该用户今日已求文 " + oldValue + " 次");
+                    return true;
+                }
+            } else {
+                jedis.setex(key, QiuWenConstant.getExpireTime(), "1");
             }
-        } else {
-            jedis.setex(key, QiuWenConstant.getExpireTime(), "1");
         }
 
         return false;
