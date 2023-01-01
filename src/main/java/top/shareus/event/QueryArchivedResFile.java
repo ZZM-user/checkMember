@@ -92,9 +92,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
         long senderId = event.getSender().getId();
         long groupId = event.getGroup().getId();
         // 管理组和测试组不管
-        Long tLong = GroupsConstant.TEST_GROUPS.stream().filter(r -> r == groupId).findAny().orElse(null);
-        Long aLong = GroupsConstant.ADMIN_GROUPS.stream().filter(r -> r == groupId).findAny().orElse(null);
-        if (ObjectUtil.isNotNull(tLong) || ObjectUtil.isNotNull(aLong)) {
+        if (GroupUtils.hasAnyGroups(groupId, GroupsConstant.TEST_GROUPS, GroupsConstant.ADMIN_GROUPS)) {
             return false;
         }
 

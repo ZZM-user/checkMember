@@ -1,6 +1,5 @@
 package top.shareus.event;
 
-import cn.hutool.core.util.ObjectUtil;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
@@ -9,6 +8,7 @@ import net.mamoe.mirai.message.data.MessageSource;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.common.core.constant.BanResWordConstant;
 import top.shareus.common.core.constant.GroupsConstant;
+import top.shareus.util.GroupUtils;
 import top.shareus.util.LogUtils;
 
 /**
@@ -18,13 +18,12 @@ import top.shareus.util.LogUtils;
  * @date 2022/8/28 9:55
  */
 public class ResChatEvent extends SimpleListenerHost {
-    
+
     @EventHandler
     private void onAdminGroupMessageEvent(GroupMessageEvent event) {
         long id = event.getGroup().getId();
-        Long rLong = GroupsConstant.RES_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
-        
-        if (ObjectUtil.isNotNull(rLong)) {
+
+        if (GroupUtils.isRes(id)) {
             if (BanResWordConstant.hasBanWord(event.getMessage().contentToString())) {
                 // 禁它言
                 event.getSender().mute(BanResWordConstant.MUTE_SECONDS);
@@ -37,7 +36,7 @@ public class ResChatEvent extends SimpleListenerHost {
             }
         }
     }
-    
+
     @Override
     public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
         LogUtils.error(context + "\n" + exception.getMessage() + "\n" + exception.getCause().getMessage());

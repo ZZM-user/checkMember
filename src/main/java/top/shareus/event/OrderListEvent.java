@@ -1,6 +1,5 @@
 package top.shareus.event;
 
-import cn.hutool.core.util.ObjectUtil;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.console.command.Command;
 import net.mamoe.mirai.event.EventHandler;
@@ -13,6 +12,7 @@ import top.shareus.command.FindInfoByQQNumber;
 import top.shareus.command.GroupCommand;
 import top.shareus.command.InvalidMemberCommand;
 import top.shareus.common.core.constant.GroupsConstant;
+import top.shareus.util.GroupUtils;
 import top.shareus.util.LogUtils;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import java.util.List;
  * @date 2022/8/28 15:06
  */
 public class OrderListEvent extends SimpleListenerHost {
-    
+
     /**
      * 激活指令
      */
@@ -39,15 +39,13 @@ public class OrderListEvent extends SimpleListenerHost {
         add(ClearGroupMemberCommand.INSTANCE);
         add(FindInfoByQQNumber.INSTANCE);
     }};
-    
+
     @EventHandler
     private void onResGroupMessageEvent(GroupMessageEvent event) {
         long id = event.getGroup().getId();
-        Long aLong = GroupsConstant.ADMIN_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
-        Long tLong = GroupsConstant.TEST_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
-        
+
         // 只支持 管理组 和 测试组使用
-        if (ObjectUtil.isNotNull(aLong) || ObjectUtil.isNotNull(tLong)) {
+        if (GroupUtils.hasAnyGroups(id, GroupsConstant.TEST_GROUPS, GroupsConstant.ADMIN_GROUPS)) {
             if (event.getMessage().contentToString().equals(ORDER)) {
                 MessageChainBuilder builder = new MessageChainBuilder();
                 for (Command command : ORDER_LIST) {
@@ -58,7 +56,7 @@ public class OrderListEvent extends SimpleListenerHost {
             }
         }
     }
-    
+
     @Override
     public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
         LogUtils.error(context + "\n" + exception.getMessage() + "\n" + exception.getCause().getMessage());
