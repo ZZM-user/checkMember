@@ -107,7 +107,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
                 if (Long.parseLong(oldValue) >= QiuWenConstant.MAX_TIMES_OF_DAY) {
                     Bot bot = BotManager.getBot();
                     Group group = bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0));
-                    group.sendMessage("请注意 【" + senderId + event.getSender().getNameCard() + "】该用户今日已求文 " + oldValue + " 次");
+                    group.sendMessage("请注意 \n[" + senderId + event.getSender().getNameCard() + "]\n该用户今日已求文 " + oldValue + " 次");
                     return true;
                 }
             } else {
