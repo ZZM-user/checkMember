@@ -4,7 +4,6 @@ import cn.hutool.core.lang.Assert;
 import cn.hutool.cron.task.Task;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
-import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.apache.ibatis.session.SqlSession;
 import top.shareus.common.BotManager;
@@ -33,12 +32,12 @@ public class Day implements Task {
 
         MessageChainBuilder builder = new MessageChainBuilder();
         builder.add("昨日资源群归档文件数量：" + hasArchived);
-        if (hasArchived < 10) {
-        }
+
         Bot bot = BotManager.getBot();
-        builder.add(new At(2657272578L));
         Group group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
         LogUtils.info(builder.build().toString());
         group.sendMessage(builder.build());
+
+        bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0)).sendMessage(builder.build());
     }
 }

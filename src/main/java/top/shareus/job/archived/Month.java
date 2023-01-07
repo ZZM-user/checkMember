@@ -44,10 +44,10 @@ public class Month implements Task {
         builder.append("本月总结：");
         builder.add("\n本月资源群归档文件数量：" + hasArchived);
         builder.add("----------------------");
-        builder.add("\n本月分享之星榜：");
+        builder.add("\n本月分享之星：");
         stars.forEach(star -> {
             builder.add(new At(star.getSenderId()));
-            builder.add("\nTA本月为我们分享了 " + star.getTimes() + " 次文件");
+            builder.add("\nTA本月为我们分享了" + star.getTimes() + "次文件");
             // 创建一个数值格式化对象
             NumberFormat numberFormat = NumberFormat.getInstance();
             // 设置精确到小数点后2位
@@ -59,9 +59,10 @@ public class Month implements Task {
         builder.add("\n大家继续努力！");
 
         Bot bot = BotManager.getBot();
-//        Group group = bot.getGroupOrFail(GroupsConstant.ADMIN_GROUPS.get(0));
         Group group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
         LogUtils.info(builder.build().toString());
         group.sendMessage(builder.build());
+
+        bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0)).sendMessage(builder.build());
     }
 }
