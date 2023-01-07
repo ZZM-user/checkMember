@@ -38,6 +38,24 @@ public interface ArchivedFileMapper extends BaseMapper<ArchivedFile> {
      * @param day 一天
      * @return {@link ShareFileStar}
      */
-    @Select("SELECT sender_id,count(sender_id) as times FROM archived_file WHERE  DATEDIFF(NOW(), archive_date) < #{day} GROUP BY sender_id ORDER BY times desc limit 3")
+    @Select("SELECT sender_id,count(sender_id) as times FROM archived_file WHERE  DATEDIFF(NOW(), archive_date) < #{day} GROUP BY sender_id ORDER BY times desc limit 5")
     List<ShareFileStar> computedFileStar(int day);
+
+    /**
+     * 根据书名查询
+     *
+     * @param name 书名
+     * @return {@link List}<{@link ArchivedFile}>
+     */
+    @Select("SELECT * FROM archived_file WHERE NAME LIKE concat( '%', #{name}, '%' ) AND enabled = 0 AND del_flag = 0 ORDER BY archive_date DESC LIMIT 10")
+    List<ArchivedFile> selectBookByName(String name);
+
+    /**
+     * 通过md5 重复文件
+     *
+     * @param md5 md5
+     * @return {@link List}<{@link ArchivedFile}>
+     */
+    @Select("SELECT * FROM archived_file WHERE md5 = #{md5}")
+    List<ArchivedFile> selectRepeatFileByMd5(String md5);
 }

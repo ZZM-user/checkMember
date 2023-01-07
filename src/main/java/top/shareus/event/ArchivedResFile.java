@@ -1,5 +1,6 @@
 package top.shareus.event;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ByteUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -21,6 +22,7 @@ import top.shareus.util.*;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 转存资源群文件、并做记录
@@ -34,34 +36,6 @@ public class ArchivedResFile extends SimpleListenerHost {
      * 文件下载路径 for Linux
      */
     public static final String FILE_DOWNLOAD_PATH = "/opt/download/groupFile/";
-
-    /**
-     * 下载文件
-     *
-     * @param event       事件
-     * @param fileMessage 文件信息
-     * @return {@code ArchivedFile}
-     */
-    private static ArchivedFile downloadFile(GroupMessageEvent event, FileMessage fileMessage) {
-        AbsoluteFile file = fileMessage.toAbsoluteFile(event.getGroup());
-        // 构造 文件归档url
-        String archiveUrl = FILE_DOWNLOAD_PATH + fileMessage.getName();
-        // 下载文件
-        long len = HttpUtil.downloadFile(file.getUrl(), new File(archiveUrl));
-        LogUtils.info(fileMessage.getName() + ": len = " + len);
-
-        if (len > 0) {
-            ArchivedFile archivedFile = new ArchivedFile();
-            archivedFile.setId(IdUtil.simpleUUID());
-            archivedFile.setName(file.getName());
-            archivedFile.setSize(file.getSize());
-            archivedFile.setMd5(String.valueOf(ByteUtil.bytesToLong(file.getMd5())));
-            archivedFile.setArchiveUrl(archiveUrl);
-            archivedFile.setOriginUrl(file.getUrl());
-            return archivedFile;
-        }
-        return null;
-    }
 
     @EventHandler
     private void onArchivedResFileEvent(GroupMessageEvent event) {
@@ -88,10 +62,6 @@ public class ArchivedResFile extends SimpleListenerHost {
                 LogUtils.info("归档路径：" + archivedFile.getArchiveUrl());
                 String uploadFilePath = AlistUtils.uploadFile(file);
                 if (StrUtil.isNotBlank(uploadFilePath)) {
-                    // 完善信息
-                    archivedFile.setArchiveUrl(uploadFilePath);
-                    archivedFile.setArchiveDate(new Date());
-                    archivedFile.setSenderId(event.getSender().getId());
                     LogUtils.info(archivedFile.toString());
                     // 将信息 写入数据库
                     try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
@@ -104,6 +74,49 @@ public class ArchivedResFile extends SimpleListenerHost {
                 LogUtils.info(archivedFile.getName() + " 存档完成！");
             }
         }
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param event       事件
+     * @param fileMessage 文件信息
+     * @return {@code ArchivedFile}
+     */
+    private static ArchivedFile downloadFile(GroupMessageEvent event, FileMessage fileMessage) {
+        AbsoluteFile file = fileMessage.toAbsoluteFile(event.getGroup());
+        // 构造 文件归档url
+        String archiveUrl = FILE_DOWNLOAD_PATH + fileMessage.getName();
+        // 下载文件
+        long len = HttpUtil.downloadFile(file.getUrl(), new File(archiveUrl));
+
+        LogUtils.info(fileMessage.getName() + ": len = " + len);
+
+        if (len > 0) {
+            // 碰撞先关
+            String md5 = String.valueOf(ByteUtil.bytesToLong(file.getMd5()));
+            List<ArchivedFile> archivedFiles = null;
+
+            try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
+                ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
+                archivedFiles = mapper.selectRepeatFileByMd5(md5);
+            } catch (Exception e) {
+                LogUtils.error(e);
+            }
+
+            return ArchivedFile.builder()
+                    .id(IdUtil.simpleUUID())
+                    .name(file.getName())
+                    .size(file.getSize())
+                    .md5(md5)
+                    .archiveDate(new Date())
+                    .archiveUrl(archiveUrl)
+                    .originUrl(file.getUrl())
+                    .senderId(event.getSender().getId())
+                    .enabled(CollUtil.isEmpty(archivedFiles) ? 0 : 1)
+                    .build();
+        }
+        return null;
     }
 
     @Override

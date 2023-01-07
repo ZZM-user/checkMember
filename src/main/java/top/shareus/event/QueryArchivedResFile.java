@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
@@ -195,15 +194,10 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             return null;
         }
 
-        QueryWrapper<ArchivedFile> wrapper = new QueryWrapper<>();
-        wrapper.like("name", name);
-        wrapper.orderByAsc("archive_date");
-        wrapper.last("limit 10");
         List<ArchivedFile> archivedFiles = null;
-
         try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
             ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
-            archivedFiles = mapper.selectList(wrapper);
+            archivedFiles = mapper.selectBookByName(name);
         } catch (Exception e) {
             LogUtils.error(e);
         }
