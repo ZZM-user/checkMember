@@ -192,11 +192,10 @@ public class QueryArchivedResFileUtils {
     public static int incrTimes(long senderId, String key, long expire) {
         try (Jedis jedis = RedisUtils.getJedis()) {
             String oldValue = jedis.get(key);
-            if (StrUtil.isNotBlank(oldValue)) {
-                jedis.incr(key);
-            } else {
+            if (StrUtil.isBlank(oldValue)) {
                 jedis.setex(key, expire, "0");
             }
+            jedis.incr(key);
             return Integer.parseInt(jedis.get(key));
         }
     }
