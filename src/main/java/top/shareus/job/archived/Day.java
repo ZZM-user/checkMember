@@ -5,7 +5,6 @@ import cn.hutool.cron.task.Task;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
-import org.apache.ibatis.session.SqlSession;
 import top.shareus.common.BotManager;
 import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.common.mapper.ArchivedFileMapper;
@@ -23,11 +22,8 @@ public class Day implements Task {
     @Override
     public void execute() {
         // 每天发送统计信息
-        Integer hasArchived = null;
-        try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
-            ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
-            hasArchived = mapper.countByYesterday();
-        }
+        Integer hasArchived = MybatisPlusUtils.getMapper(ArchivedFileMapper.class).countByYesterday();
+
         Assert.notNull(hasArchived, "获取昨日归档信息失败!");
 
         MessageChainBuilder builder = new MessageChainBuilder();

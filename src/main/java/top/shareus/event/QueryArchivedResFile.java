@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Group;
@@ -14,7 +13,6 @@ import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.PlainText;
-import org.apache.ibatis.session.SqlSession;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
 import top.shareus.common.BotManager;
@@ -144,7 +142,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
      * @param plainText 纯文本
      * @return {@code String}
      */
-    private String extractBookInfo(PlainText plainText) {
+    public String extractBookInfo(PlainText plainText) {
         if (ObjectUtil.isNull(plainText)) {
             return "";
         }
@@ -195,18 +193,7 @@ public class QueryArchivedResFile extends SimpleListenerHost {
             return null;
         }
 
-        QueryWrapper<ArchivedFile> wrapper = new QueryWrapper<>();
-        wrapper.like("name", name);
-        wrapper.orderByAsc("archive_date");
-        wrapper.last("limit 10");
-        List<ArchivedFile> archivedFiles = null;
-
-        try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
-            ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
-            archivedFiles = mapper.selectList(wrapper);
-        } catch (Exception e) {
-            LogUtils.error(e);
-        }
+        List<ArchivedFile> archivedFiles = MybatisPlusUtils.getMapper(ArchivedFileMapper.class).selectBookByName(name);
         if (CollUtil.isEmpty(archivedFiles)) {
             LogUtils.info("查不到相关内容");
             return null;

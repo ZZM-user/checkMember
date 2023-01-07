@@ -8,7 +8,6 @@ import cn.hutool.http.HttpStatus;
 import cn.hutool.json.JSONUtil;
 import top.shareus.common.core.constant.ShortUrlConstant;
 
-import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -37,7 +36,7 @@ public class ShortUrlUtils {
     public static String generateShortUrl(String longUrl) {
         HashMap<String, String> map = new HashMap(3) {{
             put("url", longUrl);
-            put("expiry", DateUtil.offsetDay(new Date(), 1));
+            put("expiry", DateUtil.format(DateUtil.tomorrow(), "yyyy-MM-dd"));
             put("debrowser", new HashMap(2) {{
                 put("type", "1");
                 put("app", "1,2");

@@ -1,5 +1,6 @@
 package top.shareus.event;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ByteUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -12,7 +13,6 @@ import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.FileMessage;
 import net.mamoe.mirai.message.data.MessageChain;
-import org.apache.ibatis.session.SqlSession;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.common.domain.ArchivedFile;
@@ -21,6 +21,7 @@ import top.shareus.util.*;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 转存资源群文件、并做记录
@@ -48,16 +49,26 @@ public class ArchivedResFile extends SimpleListenerHost {
         String archiveUrl = FILE_DOWNLOAD_PATH + fileMessage.getName();
         // 下载文件
         long len = HttpUtil.downloadFile(file.getUrl(), new File(archiveUrl));
+
         LogUtils.info(fileMessage.getName() + ": len = " + len);
 
         if (len > 0) {
+            // 碰撞先关
+            String md5 = String.valueOf(ByteUtil.bytesToLong(file.getMd5()));
+
+            List<ArchivedFile> archivedFiles = MybatisPlusUtils.getMapper(ArchivedFileMapper.class).selectRepeatFileByMd5(md5);
+
             ArchivedFile archivedFile = new ArchivedFile();
             archivedFile.setId(IdUtil.simpleUUID());
             archivedFile.setName(file.getName());
+            archivedFile.setSenderId(file.getSize());
             archivedFile.setSize(file.getSize());
-            archivedFile.setMd5(String.valueOf(ByteUtil.bytesToLong(file.getMd5())));
-            archivedFile.setArchiveUrl(archiveUrl);
+            archivedFile.setMd5(md5);
+            archivedFile.setEnabled(CollUtil.isEmpty(archivedFiles) ? 0 : 1);
             archivedFile.setOriginUrl(file.getUrl());
+            archivedFile.setArchiveUrl(archiveUrl);
+            archivedFile.setArchiveDate(new Date());
+
             return archivedFile;
         }
         return null;
@@ -88,18 +99,9 @@ public class ArchivedResFile extends SimpleListenerHost {
                 LogUtils.info("归档路径：" + archivedFile.getArchiveUrl());
                 String uploadFilePath = AlistUtils.uploadFile(file);
                 if (StrUtil.isNotBlank(uploadFilePath)) {
-                    // 完善信息
-                    archivedFile.setArchiveUrl(uploadFilePath);
-                    archivedFile.setArchiveDate(new Date());
-                    archivedFile.setSenderId(event.getSender().getId());
                     LogUtils.info(archivedFile.toString());
                     // 将信息 写入数据库
-                    try (SqlSession session = MybatisPlusUtils.sqlSessionFactory.openSession(true)) {
-                        ArchivedFileMapper mapper = session.getMapper(ArchivedFileMapper.class);
-                        mapper.insert(archivedFile);
-                    } catch (Exception e) {
-                        LogUtils.error(e);
-                    }
+                    MybatisPlusUtils.getMapper(ArchivedFileMapper.class).insert(archivedFile);
                 }
                 LogUtils.info(archivedFile.getName() + " 存档完成！");
             }

@@ -18,7 +18,7 @@ dependencies {
     implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 }
 group = 'top.shareus'
-version = '0.2.2'
+version = '0.2.5'
 
 repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }
