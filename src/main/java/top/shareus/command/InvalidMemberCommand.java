@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class InvalidMemberCommand extends JRawCommand {
     public static final InvalidMemberCommand INSTANCE = new InvalidMemberCommand();
-    
+
     private InvalidMemberCommand() {
         // 使用插件主类对象作为指令拥有者；设置主指令名为 "test"
         super(CheckMember.INSTANCE, "invalidMember");
@@ -39,18 +39,18 @@ public class InvalidMemberCommand extends JRawCommand {
         // 设置指令前缀是可选的，即使用 `test` 也能执行指令而不需要 `/test`
         setPrefixOptional(true);
     }
-    
+
     @Override
     public void onCommand(@NotNull CommandContext context, @NotNull MessageChain args) {
         Bot bot = BotManager.getBot();
         CommandSender sender = context.getSender();
-    
+
         // 率先读取出所有群成员信息
         Map<String, ContactList<NormalMember>> allGroupMembers = GroupUtils.getAllGroupMembers(bot);
         ContactList<NormalMember> adminMemberList = allGroupMembers.get("admin");
         ContactList<NormalMember> resMemberList = allGroupMembers.get("res");
         ContactList<NormalMember> chatMemberList = allGroupMembers.get("chat");
-    
+
         LogUtils.debug(adminMemberList.size() + "\t" + resMemberList.size() + "\t" + chatMemberList.size());
         Boolean hasGroups = GroupUtils.invalidGroup(adminMemberList, resMemberList, chatMemberList);
         try {
@@ -63,25 +63,28 @@ public class InvalidMemberCommand extends JRawCommand {
             LogUtils.error(e);
             sender.sendMessage("操作失败，请联系管理员！");
         }
-    
+
     }
-    
+
     /**
      * 获取失效的群成员
      *
      * @param adminMemberList
      * @param resMemberList
      * @param chatMemberList
-     *
      * @return
      */
     private ContactList<NormalMember> getInvalidMember(ContactList<NormalMember> adminMemberList, ContactList<NormalMember> resMemberList, ContactList<NormalMember> chatMemberList) {
         List<NormalMember> invalidMember = new ArrayList<>();
         for (NormalMember member : resMemberList) {
             long id = member.getId();
+            String nameCard = member.getNameCard();
             NormalMember adminMember = adminMemberList.stream().filter(m -> m.getId() == id).findAny().orElse(null);
             NormalMember chatMember = chatMemberList.stream().filter(m -> m.getId() == id).findAny().orElse(null);
             if (ObjectUtil.isNull(adminMember) && ObjectUtil.isNull(chatMember)) {
+                invalidMember.add(member);
+            }
+            if (!"①".equals(nameCard) && !"②".equals(nameCard)) {
                 invalidMember.add(member);
             }
         }

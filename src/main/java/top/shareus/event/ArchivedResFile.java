@@ -36,6 +36,42 @@ public class ArchivedResFile extends SimpleListenerHost {
      */
     public static final String FILE_DOWNLOAD_PATH = "/opt/download/groupFile/";
 
+    @EventHandler
+    private void onArchivedResFileEvent(GroupMessageEvent event) {
+        long id = event.getGroup().getId();
+        // 只监管 资源群
+        if (GroupUtils.notHasAnyGroups(id, GroupsConstant.RES_GROUPS, GroupsConstant.TEST_GROUPS)) {
+            return;
+        }
+
+        // 监听 【所有】 文件
+        MessageChain message = event.getMessage();
+        // 获取文件
+        FileMessage fileMessage = MessageChainUtils.fetchFileMessage(message);
+
+        if (ObjectUtil.isNotNull(fileMessage)) {
+            // 下载文件
+            ArchivedFile archivedFile = downloadFile(event, fileMessage);
+
+            if (ObjectUtil.isNotNull(archivedFile)) {
+                // 转存文件，存放盘，获取连接
+                LogUtils.info("文件下载成功：" + archivedFile.getName());
+                File file = new File(archivedFile.getArchiveUrl());
+
+                LogUtils.info("归档路径：" + archivedFile.getArchiveUrl());
+                String uploadFilePath = AlistUtils.uploadFile(file);
+                if (StrUtil.isNotBlank(uploadFilePath)) {
+                    LogUtils.info(archivedFile.toString());
+                    // 将信息 写入数据库
+                    MybatisPlusUtils.getMapper(ArchivedFileMapper.class).insert(archivedFile);
+                    // 判断 是否完成求文
+                    QueryLogUtils.queryLogByBookName(archivedFile);
+                }
+                LogUtils.info(archivedFile.getName() + " 存档完成！");
+            }
+        }
+    }
+
     /**
      * 下载文件
      *
@@ -72,40 +108,6 @@ public class ArchivedResFile extends SimpleListenerHost {
             return archivedFile;
         }
         return null;
-    }
-
-    @EventHandler
-    private void onArchivedResFileEvent(GroupMessageEvent event) {
-        long id = event.getGroup().getId();
-        // 只监管 资源群
-        if (GroupUtils.notHasAnyGroups(id, GroupsConstant.RES_GROUPS, GroupsConstant.TEST_GROUPS)) {
-            return;
-        }
-
-        // 监听 【所有】 文件
-        MessageChain message = event.getMessage();
-        // 获取文件
-        FileMessage fileMessage = MessageChainUtils.fetchFileMessage(message);
-
-        if (ObjectUtil.isNotNull(fileMessage)) {
-            // 下载文件
-            ArchivedFile archivedFile = downloadFile(event, fileMessage);
-
-            if (ObjectUtil.isNotNull(archivedFile)) {
-                // 转存文件，存放盘，获取连接
-                LogUtils.info("文件下载成功：" + archivedFile.getName());
-                File file = new File(archivedFile.getArchiveUrl());
-
-                LogUtils.info("归档路径：" + archivedFile.getArchiveUrl());
-                String uploadFilePath = AlistUtils.uploadFile(file);
-                if (StrUtil.isNotBlank(uploadFilePath)) {
-                    LogUtils.info(archivedFile.toString());
-                    // 将信息 写入数据库
-                    MybatisPlusUtils.getMapper(ArchivedFileMapper.class).insert(archivedFile);
-                }
-                LogUtils.info(archivedFile.getName() + " 存档完成！");
-            }
-        }
     }
 
     @Override

@@ -10,6 +10,7 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import top.shareus.common.mapper.ArchivedFileMapper;
+import top.shareus.common.mapper.QueryLogMapper;
 
 import javax.sql.DataSource;
 
@@ -33,8 +34,11 @@ public class MybatisPlusUtils {
         TransactionFactory transactionFactory = new JdbcTransactionFactory();
         Environment environment = new Environment("Production", transactionFactory, dataSource);
         MybatisConfiguration configuration = new MybatisConfiguration(environment);
+
         // 注册mapper
         configuration.addMapper(ArchivedFileMapper.class);
+        configuration.addMapper(QueryLogMapper.class);
+
         configuration.setLogImpl(StdOutImpl.class);
         SqlSessionFactory sessionFactory = new MybatisSqlSessionFactoryBuilder().build(configuration);
         return SqlSessionManager.newInstance(sessionFactory);

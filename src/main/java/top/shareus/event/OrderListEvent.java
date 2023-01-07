@@ -7,10 +7,7 @@ import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.GroupMessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.jetbrains.annotations.NotNull;
-import top.shareus.command.ClearGroupMemberCommand;
-import top.shareus.command.FindInfoByQQNumber;
-import top.shareus.command.GroupCommand;
-import top.shareus.command.InvalidMemberCommand;
+import top.shareus.command.*;
 import top.shareus.common.core.constant.GroupsConstant;
 import top.shareus.util.GroupUtils;
 import top.shareus.util.LogUtils;
@@ -38,6 +35,7 @@ public class OrderListEvent extends SimpleListenerHost {
         add(InvalidMemberCommand.INSTANCE);
         add(ClearGroupMemberCommand.INSTANCE);
         add(FindInfoByQQNumber.INSTANCE);
+        add(UnFinishedQueryCommand.INSTANCE);
     }};
 
     @EventHandler

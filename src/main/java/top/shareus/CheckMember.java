@@ -7,14 +7,13 @@ import net.mamoe.mirai.console.command.CommandManager;
 import net.mamoe.mirai.console.plugin.jvm.JavaPlugin;
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescriptionBuilder;
 import net.mamoe.mirai.event.GlobalEventChannel;
-import top.shareus.command.ClearGroupMemberCommand;
-import top.shareus.command.FindInfoByQQNumber;
-import top.shareus.command.GroupCommand;
-import top.shareus.command.InvalidMemberCommand;
+import top.shareus.command.*;
 import top.shareus.event.*;
 import top.shareus.job.archived.Day;
 import top.shareus.job.archived.Month;
 import top.shareus.job.archived.Week;
+import top.shareus.job.querylog.Feedback;
+import top.shareus.job.querylog.Polling;
 
 /**
  * 检查成员
@@ -26,7 +25,7 @@ public final class CheckMember extends JavaPlugin {
     public static final CheckMember INSTANCE = new CheckMember();
 
     private CheckMember() {
-        super(new JvmPluginDescriptionBuilder("top.shareus", "0.2.5")
+        super(new JvmPluginDescriptionBuilder("top.shareus", "0.2.6")
                 .name("checkMember")
                 .author("Baidu")
                 .info("百度定制群管插件")
@@ -41,6 +40,7 @@ public final class CheckMember extends JavaPlugin {
         CommandManager.INSTANCE.registerCommand(InvalidMemberCommand.INSTANCE, true);
         CommandManager.INSTANCE.registerCommand(ClearGroupMemberCommand.INSTANCE, true);
         CommandManager.INSTANCE.registerCommand(FindInfoByQQNumber.INSTANCE, true);
+        CommandManager.INSTANCE.registerCommand(UnFinishedQueryCommand.INSTANCE, true);
 
         GlobalEventChannel.INSTANCE.registerListenerHost(new ResChatEvent());
         GlobalEventChannel.INSTANCE.registerListenerHost(new OrderListEvent());
@@ -61,10 +61,11 @@ public final class CheckMember extends JavaPlugin {
      * @return {@link Setting}
      */
     private void initCronTask() {
+        CronUtil.schedule("* 0/10 * * * ?", (Task) () -> new Polling().execute());
+        CronUtil.schedule("0 0 18 * * ?", (Task) () -> new Feedback().execute());
         CronUtil.schedule("0 0 12 * * ?", (Task) () -> new Day().execute());
         CronUtil.schedule("0 22 * * 7", (Task) () -> new Week().execute());
-        CronUtil.schedule("0 18 L * *", (Task) () -> new Month().execute());
-//        CronUtil.schedule("0/1 * * * *", (Task) () -> new Week().execute());
+        CronUtil.schedule("0 22 L * *", (Task) () -> new Month().execute());
         CronUtil.start();
         getLogger().info("初始化Corn任务完成！当前任务池数量：" + CronUtil.getScheduler().size());
     }
