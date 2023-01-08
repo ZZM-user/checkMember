@@ -15,8 +15,14 @@ import net.mamoe.mirai.message.data.MessageChain;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.CheckMember;
 import top.shareus.common.BotManager;
+import top.shareus.common.NormalMemberVO;
 import top.shareus.common.core.constant.GroupsConstant;
+import top.shareus.util.ExcelUtils;
+import top.shareus.util.GroupUploadFileUtils;
 import top.shareus.util.GroupUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 清除指定群成员
@@ -61,6 +67,7 @@ public class ClearGroupMemberCommand extends JRawCommand {
 
         ContactList<NormalMember> members = group.getMembers();
         ContactList<NormalMember> adminGroupMembers = adminGroup.getMembers();
+        List<NormalMemberVO> invalidMembers = new ArrayList<>();
 
         DateTime offset2 = DateTime.now().offset(DateField.MONTH, -2);
         DateTime offset3 = DateTime.now().offset(DateField.MONTH, -3);
@@ -82,6 +89,7 @@ public class ClearGroupMemberCommand extends JRawCommand {
 
             // 两月以上未发言者 且未备注请假
             if (DateTime.of(timeStamp).before(offset2) && !("请假".equals(member.getNameCard()))) {
+                invalidMembers.add(NormalMemberVO.toMemberVO(member, "两月以上未发言者 且未备注请假"));
                 String message = "长时间未发言被移出";
                 member.kick(message);
                 CheckMember.INSTANCE.getLogger().info(member.getId() + "-" + member.getNick() + "-" + message);
@@ -89,10 +97,13 @@ public class ClearGroupMemberCommand extends JRawCommand {
 
             // 三月以上未发言者
             if (DateTime.of(timeStamp).before(offset3)) {
+                invalidMembers.add(NormalMemberVO.toMemberVO(member, "三月以上未发言者"));
                 String message = "长时间未发言被移出";
                 member.kick(message);
                 CheckMember.INSTANCE.getLogger().info(member.getId() + "-" + member.getNick() + "-" + message);
             }
         }
+        String path = ExcelUtils.exportMemberDataExcel(invalidMembers, group.getName() + " - 失效群员名单");
+        GroupUploadFileUtils.uploadFile(group, path);
     }
 }

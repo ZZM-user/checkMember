@@ -33,10 +33,10 @@ public class Feedback implements Task {
         queryLogs.forEach(queryLog -> {
             MessageChainBuilder builder = new MessageChainBuilder();
             builder.add("今日未完成的求文：");
-            builder.add("\n求文内容: " + queryLog.getContent());
-            builder.add("\n求文QQ: " + queryLog.getSenderId());
-            builder.add("\n求文名称: " + queryLog.getSenderName());
-            builder.add("\n求文时间: " + DateUtil.formatDateTime(queryLog.getSendTime()));
+            builder.add("\n求文内容: \n" + queryLog.getContent());
+            builder.add("\n\n求文QQ: " + queryLog.getSenderId());
+            builder.add("\n求文者: " + queryLog.getSenderName());
+            builder.add("\n时间: " + DateUtil.formatDateTime(queryLog.getSendTime()));
             group.sendMessage(builder.build());
         });
     }

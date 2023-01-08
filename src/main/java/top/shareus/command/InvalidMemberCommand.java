@@ -1,16 +1,19 @@
 package top.shareus.command;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.console.command.CommandContext;
 import net.mamoe.mirai.console.command.CommandSender;
 import net.mamoe.mirai.console.command.java.JRawCommand;
-import net.mamoe.mirai.contact.ContactList;
-import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.message.data.MessageChain;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.CheckMember;
 import top.shareus.common.BotManager;
+import top.shareus.common.NormalMemberVO;
+import top.shareus.common.core.constant.GroupsConstant;
+import top.shareus.util.ExcelUtils;
+import top.shareus.util.GroupUploadFileUtils;
 import top.shareus.util.GroupUtils;
 import top.shareus.util.LogUtils;
 
@@ -46,18 +49,18 @@ public class InvalidMemberCommand extends JRawCommand {
         CommandSender sender = context.getSender();
 
         // 率先读取出所有群成员信息
-        Map<String, ContactList<NormalMember>> allGroupMembers = GroupUtils.getAllGroupMembers(bot);
-        ContactList<NormalMember> adminMemberList = allGroupMembers.get("admin");
-        ContactList<NormalMember> resMemberList = allGroupMembers.get("res");
-        ContactList<NormalMember> chatMemberList = allGroupMembers.get("chat");
+        Map<String, List<NormalMemberVO>> allGroupMembers = GroupUtils.getAllGroupMembers(bot);
+        List<NormalMemberVO> adminMemberList = allGroupMembers.get("admin");
+        List<NormalMemberVO> resMemberList = allGroupMembers.get("res");
+        List<NormalMemberVO> chatMemberList = allGroupMembers.get("chat");
 
         LogUtils.debug(adminMemberList.size() + "\t" + resMemberList.size() + "\t" + chatMemberList.size());
         Boolean hasGroups = GroupUtils.invalidGroup(adminMemberList, resMemberList, chatMemberList);
         try {
             if (hasGroups) {
-                ContactList<NormalMember> invalidMember = getInvalidMember(adminMemberList, resMemberList, chatMemberList);
-                String formatGroupMember = GroupCommand.formatGroupMember("失效人员列表", invalidMember);
-                sender.sendMessage(formatGroupMember);
+                List<NormalMemberVO> invalidMember = getInvalidMember(adminMemberList, resMemberList, chatMemberList);
+                String filePath = ExcelUtils.exportMemberDataExcel(invalidMember, "资源群失效人员名单");
+                GroupUploadFileUtils.uploadFile(bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0)), filePath);
             }
         } catch (Exception e) {
             LogUtils.error(e);
@@ -74,20 +77,29 @@ public class InvalidMemberCommand extends JRawCommand {
      * @param chatMemberList
      * @return
      */
-    private ContactList<NormalMember> getInvalidMember(ContactList<NormalMember> adminMemberList, ContactList<NormalMember> resMemberList, ContactList<NormalMember> chatMemberList) {
-        List<NormalMember> invalidMember = new ArrayList<>();
-        for (NormalMember member : resMemberList) {
+    private List<NormalMemberVO> getInvalidMember(List<NormalMemberVO> adminMemberList, List<NormalMemberVO> resMemberList, List<NormalMemberVO> chatMemberList) {
+        List<NormalMemberVO> invalidMember = new ArrayList<>();
+        for (NormalMemberVO member : resMemberList) {
             long id = member.getId();
             String nameCard = member.getNameCard();
-            NormalMember adminMember = adminMemberList.stream().filter(m -> m.getId() == id).findAny().orElse(null);
-            NormalMember chatMember = chatMemberList.stream().filter(m -> m.getId() == id).findAny().orElse(null);
-            if (ObjectUtil.isNull(adminMember) && ObjectUtil.isNull(chatMember)) {
-                invalidMember.add(member);
+            NormalMemberVO adminMember = adminMemberList.stream().filter(m -> m.getId().equals(id)).findAny().orElse(null);
+            NormalMemberVO chatMember = chatMemberList.stream().filter(m -> m.getId().equals(id)).findAny().orElse(null);
+
+            if (ObjectUtil.isNotNull(adminMember)) {
+                continue;
             }
-            if (!"①".equals(nameCard) && !"②".equals(nameCard)) {
+
+            if (!StrUtil.containsAny(nameCard, "①", "②")) {
+                member.setRemark2("备注不规范");
+                invalidMember.add(member);
+                continue;
+            }
+
+            if (ObjectUtil.isNull(chatMember)) {
+                member.setRemark2("不在任一聊天群内");
                 invalidMember.add(member);
             }
         }
-        return new ContactList<>(invalidMember);
+        return invalidMember;
     }
 }

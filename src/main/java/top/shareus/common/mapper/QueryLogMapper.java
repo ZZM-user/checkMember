@@ -28,7 +28,7 @@ public interface QueryLogMapper extends BaseMapper<QueryLog> {
      * @param bookName 书名
      * @return {@link List}<{@link QueryLog}>
      */
-    @Select("SELECT * FROM query_log WHERE `status` = 1 and  #{bookName} LIKE `extract`")
+    @Select("SELECT * FROM query_log WHERE `status` = 1 and  #{bookName} LIKE concat('%',`extract`,'%')")
     List<QueryLog> queryLogByBookName(String bookName);
 
     /**
@@ -39,4 +39,13 @@ public interface QueryLogMapper extends BaseMapper<QueryLog> {
      */
     @Select("SELECT * FROM query_log WHERE `status` = 1 and DATEDIFF(NOW(),send_time) = #{day}")
     List<QueryLog> selectUnfinishedQuery(Integer day);
+
+    /**
+     * 昨天 求问数量
+     *
+     * @return {@link List}<{@link QueryLog}>
+     */
+    @Select("SELECT count(1) FROM query_log WHERE DATEDIFF(NOW(), send_time) = 1")
+    List<QueryLog> countByYesterday();
+
 }

@@ -8,6 +8,7 @@ import cn.hutool.core.util.ReUtil;
 import cn.hutool.core.util.StrUtil;
 import net.mamoe.mirai.message.data.PlainText;
 import org.junit.jupiter.api.Test;
+import top.shareus.common.NormalMemberVO;
 import top.shareus.util.QueryArchivedResFileUtils;
 
 import java.util.ArrayList;
@@ -25,6 +26,34 @@ class QiuWenConstantTest {
         System.out.println(DateTime.now() + "\n" + DateUtil.endOfDay(new Date()));
 
         System.out.println(DateUtil.nextWeek());
+    }
+
+    @Test
+    void test() {
+        String nick = "①君言卿(择言而嫁)";
+        String nick2 = "默默";
+        String nick3 = "②默默";
+        boolean containsAny = !StrUtil.containsAny(nick, "①", "②");
+        boolean containsAny2 = !StrUtil.containsAny(nick2, "①", "②");
+        boolean containsAny3 = !StrUtil.containsAny(nick3, "①", "②");
+
+        System.out.println("nick = " + nick);
+        System.out.println("containsAny = " + containsAny);
+
+        System.out.println("nick2 = " + nick2);
+        System.out.println("containsAny2 = " + containsAny2);
+
+        System.out.println("nick3 = " + nick3);
+        System.out.println("containsAny3 = " + containsAny3);
+
+        ArrayList<NormalMemberVO> normalMemberVOS = new ArrayList() {{
+            NormalMemberVO normalMemberVO = new NormalMemberVO();
+            normalMemberVO.setId(11111111L);
+            add(normalMemberVO);
+        }};
+        Long id = 11111111L;
+        NormalMemberVO normalMemberVO = normalMemberVOS.stream().filter(m -> m.getId().equals(id)).findAny().orElse(null);
+        System.out.println("normalMemberVO = " + normalMemberVO);
     }
 
     @Test

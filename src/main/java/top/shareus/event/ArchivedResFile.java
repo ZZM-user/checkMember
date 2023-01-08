@@ -34,7 +34,7 @@ public class ArchivedResFile extends SimpleListenerHost {
     /**
      * 文件下载路径 for Linux
      */
-    public static final String FILE_DOWNLOAD_PATH = "/opt/download/groupFile/";
+    public static final String FILE_DOWNLOAD_PATH = "/opt/download/mirai/groupFile/";
 
     @EventHandler
     private void onArchivedResFileEvent(GroupMessageEvent event) {
@@ -59,16 +59,23 @@ public class ArchivedResFile extends SimpleListenerHost {
                 File file = new File(archivedFile.getArchiveUrl());
 
                 LogUtils.info("归档路径：" + archivedFile.getArchiveUrl());
-                String uploadFilePath = AlistUtils.uploadFile(file);
-                if (StrUtil.isNotBlank(uploadFilePath)) {
-                    LogUtils.info(archivedFile.toString());
-                    // 将信息 写入数据库
-                    MybatisPlusUtils.getMapper(ArchivedFileMapper.class).insert(archivedFile);
-                    // 判断 是否完成求文
-                    QueryLogUtils.queryLogByBookName(archivedFile);
+
+                try {
+                    String uploadFilePath = AlistUtils.uploadFile(file);
+                    if (StrUtil.isNotBlank(uploadFilePath)) {
+                        LogUtils.info(archivedFile.toString());
+                        // 将信息 写入数据库
+                        MybatisPlusUtils.getMapper(ArchivedFileMapper.class).insert(archivedFile);
+                        // 判断 是否完成求文
+                        QueryLogUtils.queryLogByBookName(archivedFile);
+                    }
+                    LogUtils.info(archivedFile.getName() + " 存档完成！");
+                    return;
+                } catch (Exception e) {
+                    LogUtils.error(e);
                 }
-                LogUtils.info(archivedFile.getName() + " 存档完成！");
             }
+            LogUtils.info(archivedFile + " 存档失败！");
         }
     }
 

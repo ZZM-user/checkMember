@@ -37,7 +37,7 @@ public class AlistConstant {
      * 登录token redis 有效期
      * 默认 48h，缩小一定时间为 47
      */
-    public static final Long AUTH_REDIS_EXPIRE = 24 * 3600L;
+    public static final Long AUTH_REDIS_EXPIRE = 45 * 3600L;
 
     /**
      * 上传文件api

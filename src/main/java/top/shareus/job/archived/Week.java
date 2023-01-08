@@ -47,7 +47,6 @@ public class Week implements Task {
         builder.add("\n占本周的 " + numberFormat.format((float) star.getTimes() / (float) hasArchived * 100) + "%");
 
         Bot bot = BotManager.getBot();
-//        Group group = bot.getGroupOrFail(GroupsConstant.ADMIN_GROUPS.get(0));
         Group group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
         LogUtils.info(builder.build().toString());
         group.sendMessage(builder.build());

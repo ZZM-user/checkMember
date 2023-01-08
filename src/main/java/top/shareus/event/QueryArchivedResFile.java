@@ -1,7 +1,6 @@
 package top.shareus.event;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.event.EventHandler;
@@ -29,11 +28,10 @@ public class QueryArchivedResFile extends SimpleListenerHost {
     @EventHandler
     private void onQueryArchivedResFile(GroupMessageEvent event) {
         long senderId = event.getSender().getId();
-        long id = event.getGroup().getId();
-        Long cLong = GroupsConstant.CHAT_GROUPS.stream().filter(r -> r == id).findAny().orElse(null);
+        long groupId = event.getGroup().getId();
 
-        // 不监管 聊天群
-        if (ObjectUtil.isNotNull(cLong)) {
+        // 不监管 聊天群、管理群
+        if (GroupUtils.hasAnyGroups(groupId, GroupsConstant.CHAT_GROUPS, GroupsConstant.ADMIN_GROUPS)) {
             return;
         }
 

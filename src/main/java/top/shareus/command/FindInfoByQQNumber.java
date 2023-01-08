@@ -6,12 +6,12 @@ import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.console.command.CommandContext;
 import net.mamoe.mirai.console.command.CommandSender;
 import net.mamoe.mirai.console.command.java.JRawCommand;
-import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.NormalMember;
 import net.mamoe.mirai.message.data.MessageChain;
 import org.jetbrains.annotations.NotNull;
 import top.shareus.CheckMember;
 import top.shareus.common.BotManager;
+import top.shareus.common.NormalMemberVO;
 import top.shareus.util.GroupUtils;
 import top.shareus.util.LogUtils;
 import top.shareus.util.NormalMemberUtils;
@@ -29,12 +29,12 @@ import java.util.stream.Collectors;
  **/
 public final class FindInfoByQQNumber extends JRawCommand {
     public static final FindInfoByQQNumber INSTANCE = new FindInfoByQQNumber();
-    
+
     public FindInfoByQQNumber() {
         // 使用插件主类对象作为指令拥有者；设置主指令名为 "test"
         super(CheckMember.INSTANCE, "find");
         // 可选设置如下属性
-        
+
         // 设置用法，这将会在 /help 中展示
         setUsage("/find <[QQ]|[NickName]|[Nick]|[SpecialTitle]>");
         // 设置描述，也会在 /help 中展示
@@ -42,11 +42,11 @@ public final class FindInfoByQQNumber extends JRawCommand {
         // 设置指令前缀是可选的，即使用 `test` 也能执行指令而不需要 `/test`
         setPrefixOptional(true);
     }
-    
+
     @Override
     public void onCommand(@NotNull CommandContext context, @NotNull MessageChain args) {
         CommandSender sender = context.getSender();
-        
+
         if (args.size() == 0) {
             sender.sendMessage("参数数量不正确 eg: " + getUsage() + " 123345");
             return;
@@ -57,10 +57,10 @@ public final class FindInfoByQQNumber extends JRawCommand {
                 sender.sendMessage("参数不能为空哦！");
                 return;
             }
-            List<NormalMember> memberList = findMembers(keyword);
+            List<NormalMemberVO> memberList = findMembers(keyword);
             if (memberList.size() > 0) {
                 StringBuilder builder = new StringBuilder();
-                
+
                 builder.append("找到了" + memberList.size() + "条信息：\n");
                 // 格式化出成员信息
                 memberList.forEach(m -> builder.append(NormalMemberUtils.format(m, true)));
@@ -74,41 +74,39 @@ public final class FindInfoByQQNumber extends JRawCommand {
             sender.sendMessage("操作失败，请联系管理员！");
         }
     }
-    
+
     /**
      * 查询成员
      *
      * @param keyword 关键字
-     *
      * @return {@link List}<{@link NormalMember}>
      */
-    private List<NormalMember> findMembers(String keyword) {
+    private List<NormalMemberVO> findMembers(String keyword) {
         Bot bot = BotManager.getBot();
         // 率先读取出所有群成员信息
-        Map<String, ContactList<NormalMember>> allGroupMembers = GroupUtils.getAllGroupMembers(bot);
-        ContactList<NormalMember> adminMemberList = allGroupMembers.get("admin");
-        ContactList<NormalMember> resMemberList = allGroupMembers.get("res");
-        ContactList<NormalMember> chatMemberList = allGroupMembers.get("chat");
-        
+        Map<String, List<NormalMemberVO>> allGroupMembers = GroupUtils.getAllGroupMembers(bot);
+        List<NormalMemberVO> adminMemberList = allGroupMembers.get("admin");
+        List<NormalMemberVO> resMemberList = allGroupMembers.get("res");
+        List<NormalMemberVO> chatMemberList = allGroupMembers.get("chat");
+
         // 收集相匹配的数据
-        List<NormalMember> collect = new ArrayList<>();
+        List<NormalMemberVO> collect = new ArrayList<>();
         collect.addAll(adminMemberList.stream().filter(m -> equal(m, keyword)).collect(Collectors.toList()));
         collect.addAll(resMemberList.stream().filter(m -> equal(m, keyword)).collect(Collectors.toList()));
         collect.addAll(chatMemberList.stream().filter(m -> equal(m, keyword)).collect(Collectors.toList()));
-        
+
         return collect;
     }
-    
-    
+
+
     /**
      * 是否符合条件
      *
      * @param member  成员
      * @param keyword 关键字
-     *
      * @return boolean
      */
-    private boolean equal(NormalMember member, String keyword) {
+    private boolean equal(NormalMemberVO member, String keyword) {
         // 关键字 同 QQ号、昵称、备注、头衔 匹配
         if (NumberUtil.isLong(keyword)) {
             return NumberUtil.parseLong(keyword) == member.getId();

@@ -110,6 +110,11 @@ public class QueryArchivedResFileUtils {
             result = split[0].substring(Math.max(split[0].indexOf(":") + 1, split[0].indexOf("：") + 1)).trim();
         }
 
+//        // 新规则
+//        // 书名：静夜思\n作者：李白\n平台：未知
+//        String[] split = plainText.getContent().split("\n");
+//        String result = split[0].substring(Math.max(split[0].indexOf(":") + 1, split[0].indexOf("：") + 1)).trim();
+
         // 太长折半
         if (result.length() > 30) {
             result = result.substring(0, result.length() / 2);

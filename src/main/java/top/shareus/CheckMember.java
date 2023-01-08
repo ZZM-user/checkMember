@@ -25,7 +25,7 @@ public final class CheckMember extends JavaPlugin {
     public static final CheckMember INSTANCE = new CheckMember();
 
     private CheckMember() {
-        super(new JvmPluginDescriptionBuilder("top.shareus", "0.2.6")
+        super(new JvmPluginDescriptionBuilder("top.shareus", "0.2.7")
                 .name("checkMember")
                 .author("Baidu")
                 .info("百度定制群管插件")

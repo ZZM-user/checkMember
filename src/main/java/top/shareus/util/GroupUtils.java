@@ -7,9 +7,11 @@ import net.mamoe.mirai.contact.ContactList;
 import net.mamoe.mirai.contact.Group;
 import net.mamoe.mirai.contact.NormalMember;
 import top.shareus.CheckMember;
+import top.shareus.common.NormalMemberVO;
 import top.shareus.common.core.constant.GroupsConstant;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 群组 常用的工具类
@@ -25,19 +27,19 @@ public class GroupUtils {
      *
      * @return {@link Map}<{@link String}, {@link ContactList}<{@link NormalMember}>>
      */
-    public static Map<String, ContactList<NormalMember>> getAllGroupMembers(Bot bot) {
-        Map<String, ContactList<NormalMember>> contactListMap = new HashMap<>();
+    public static Map<String, List<NormalMemberVO>> getAllGroupMembers(Bot bot) {
+        Map<String, List<NormalMemberVO>> contactListMap = new HashMap<>();
 
         // 读取 管理组成员
-        ContactList<NormalMember> adminMemberList = GroupUtils.getGroupMembers(bot, GroupsConstant.ADMIN_GROUPS);
+        List<NormalMemberVO> adminMemberList = GroupUtils.getGroupMembers(bot, GroupsConstant.ADMIN_GROUPS);
         contactListMap.put("admin", adminMemberList);
 
         // 读取 资源组成员
-        ContactList<NormalMember> resMemberList = GroupUtils.getGroupMembers(bot, GroupsConstant.RES_GROUPS);
+        List<NormalMemberVO> resMemberList = GroupUtils.getGroupMembers(bot, GroupsConstant.RES_GROUPS);
         contactListMap.put("res", resMemberList);
 
         // 读取 聊天组成员
-        ContactList<NormalMember> chatMemberList = GroupUtils.getGroupMembers(bot, GroupsConstant.CHAT_GROUPS);
+        List<NormalMemberVO> chatMemberList = GroupUtils.getGroupMembers(bot, GroupsConstant.CHAT_GROUPS);
         contactListMap.put("chat", chatMemberList);
 
         return contactListMap;
@@ -50,19 +52,21 @@ public class GroupUtils {
      * @param group
      * @return
      */
-    public static ContactList<NormalMember> getGroupMembers(Bot bot, List<Long> group) {
-        List<NormalMember> groupList = new ArrayList<>();
+    public static List<NormalMemberVO> getGroupMembers(Bot bot, List<Long> group) {
+        List<NormalMemberVO> groupList = new ArrayList<>();
         Group groupTemp;
         for (Long number : group) {
             groupTemp = bot.getGroup(number);
             if (ObjectUtil.isNotNull(groupTemp)) {
-                groupList.addAll(groupTemp.getMembers());
-                CheckMember.INSTANCE.getLogger().debug(groupTemp.getName() + "\n" + groupTemp.getMembers().size() + "成员");
+                ContactList<NormalMember> members = groupTemp.getMembers();
+                List<NormalMemberVO> collect = members.stream().map(NormalMemberVO::toMemberVO).collect(Collectors.toList());
+                groupList.addAll(collect);
+                CheckMember.INSTANCE.getLogger().debug(groupTemp.getName() + "\n" + collect.size() + "成员");
             } else {
                 CheckMember.INSTANCE.getLogger().error("获取群成员列表失败：" + number);
             }
         }
-        return new ContactList<>(groupList);
+        return groupList;
     }
 
     /**
@@ -74,7 +78,7 @@ public class GroupUtils {
      * @return
      */
     public static Boolean invalidGroup
-    (ContactList<NormalMember> adminMemberList, ContactList<NormalMember> resMemberList, ContactList<NormalMember> chatMemberList) {
+    (List<NormalMemberVO> adminMemberList, List<NormalMemberVO> resMemberList, List<NormalMemberVO> chatMemberList) {
         if (adminMemberList.isEmpty()) {
             CheckMember.INSTANCE.getLogger().error("管理群组加载失败！");
         }
