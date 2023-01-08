@@ -97,7 +97,7 @@ public class ArchivedResFile extends SimpleListenerHost {
             ArchivedFile archivedFile = new ArchivedFile();
             archivedFile.setId(IdUtil.simpleUUID());
             archivedFile.setName(file.getName());
-            archivedFile.setSenderId(file.getSize());
+            archivedFile.setSenderId(event.getSender().getId());
             archivedFile.setSize(file.getSize());
             archivedFile.setMd5(md5);
             archivedFile.setEnabled(CollUtil.isEmpty(archivedFiles) ? 0 : 1);
