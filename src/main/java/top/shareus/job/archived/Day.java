@@ -33,8 +33,8 @@ public class Day implements Task {
 
         MessageChainBuilder builder = new MessageChainBuilder();
         builder.add("昨日资源群归档文件数量：" + hasArchived);
-        builder.add("昨日资源群求文数量：" + queryLogs.size());
-        builder.add("昨日资源群未完成的求文：" + unfinishedQuery.size());
+        builder.add("\n昨日资源群求文数量：" + queryLogs.size());
+        builder.add("\n昨日资源群未完成的求文：" + unfinishedQuery.size());
 
         Bot bot = BotManager.getBot();
         Group group = bot.getGroupOrFail(GroupsConstant.TEST_GROUPS.get(0));
