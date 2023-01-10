@@ -81,9 +81,9 @@ public class QueryArchivedResFileUtils {
             return false;
         }
 
-        if (ReUtil.contains("(求文)|(求)", content)) {
-            return true;
-        }
+//        if (ReUtil.contains("(求文)|(求)", content)) {
+//            return true;
+//        }
 
         return ReUtil.contains("(书名)", content) && ReUtil.contains("(作者)", content) && ReUtil.contains("(平台)", content);
     }
@@ -100,20 +100,20 @@ public class QueryArchivedResFileUtils {
         }
 
         // 匹配 《书名》
-        String result = ReUtil.get("[求文](.*)", plainText.getContent(), 0);
-        if (StrUtil.isNotEmpty(result)) {
-            result = oldRule(result);
-        } else {
-            // 新规则
-            // 书名：静夜思\n作者：李白\n平台：未知
-            String[] split = plainText.getContent().split("\n");
-            result = split[0].substring(Math.max(split[0].indexOf(":") + 1, split[0].indexOf("：") + 1)).trim();
-        }
+//        String result = ReUtil.get("[求文](.*)", plainText.getContent(), 0);
+//        if (StrUtil.isNotEmpty(result)) {
+//            result = oldRule(result);
+//        } else {
+//            // 新规则
+//            // 书名：静夜思\n作者：李白\n平台：未知
+//            String[] split = plainText.getContent().split("\n");
+//            result = split[0].substring(Math.max(split[0].indexOf(":") + 1, split[0].indexOf("：") + 1)).trim();
+//        }
 
-//        // 新规则
-//        // 书名：静夜思\n作者：李白\n平台：未知
-//        String[] split = plainText.getContent().split("\n");
-//        String result = split[0].substring(Math.max(split[0].indexOf(":") + 1, split[0].indexOf("：") + 1)).trim();
+        // 新规则
+        // 书名：静夜思\n作者：李白\n平台：未知
+        String[] split = plainText.getContent().split("\n");
+        String result = split[0].substring(Math.max(split[0].indexOf(":") + 1, split[0].indexOf("：") + 1)).trim();
 
         // 太长折半
         if (result.length() > 30) {
