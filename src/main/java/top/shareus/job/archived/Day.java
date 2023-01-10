@@ -28,12 +28,12 @@ public class Day implements Task {
         Integer hasArchived = MybatisPlusUtils.getMapper(ArchivedFileMapper.class).countByYesterday();
 
         QueryLogMapper queryLogMapper = MybatisPlusUtils.getMapper(QueryLogMapper.class);
-        List<QueryLog> queryLogs = queryLogMapper.countByYesterday();
+        Integer hasQueryLogs = queryLogMapper.countByYesterday();
         List<QueryLog> unfinishedQuery = queryLogMapper.selectUnfinishedQuery(1);
 
         MessageChainBuilder builder = new MessageChainBuilder();
         builder.add("昨日资源群归档文件数量：" + hasArchived);
-        builder.add("\n昨日资源群求文数量：" + queryLogs.size());
+        builder.add("\n昨日资源群求文数量：" + hasQueryLogs);
         builder.add("\n昨日资源群未完成的求文：" + unfinishedQuery.size());
 
         Bot bot = BotManager.getBot();

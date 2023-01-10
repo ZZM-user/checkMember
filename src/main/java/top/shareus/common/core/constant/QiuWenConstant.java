@@ -32,6 +32,12 @@ public class QiuWenConstant {
     public static final Long ERROR_TEMPLATE_MAX_TIMES_OF_WEEK = 5L;
 
     /**
+     * 求文日志多久会自动失败
+     */
+    public static final Long QIU_WEN_MAX_DAY_WILL_FAIL = 3L;
+
+
+    /**
      * 计算求文到期时间
      *
      * @return {@link Long}

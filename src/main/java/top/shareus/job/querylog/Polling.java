@@ -1,6 +1,8 @@
 package top.shareus.job.querylog;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.cron.task.Task;
@@ -63,6 +65,20 @@ public class Polling implements Task {
         }
     }
 
+    /**
+     * 完成查询
+     *
+     * @param queryLog 查询日志
+     */
+    private static void stopQuery(QueryLog queryLog) {
+        queryLog.setStatus(2);
+        queryLog.setResult("超时未完成，自动关闭");
+        MybatisPlusUtils.getMapper(QueryLogMapper.class).updateById(queryLog);
+        String key = QiuWenConstant.QIU_WEN_REDIS_KEY + queryLog.getSenderId();
+        QueryArchivedResFileUtils.incrTimes(queryLog.getSenderId(), key, QiuWenConstant.getExpireTime());
+        LogUtils.info("该求文任务失败: " + queryLog);
+    }
+
     @Override
     public void execute() {
         LogUtils.info("开始对求文任务检查……");
@@ -81,8 +97,30 @@ public class Polling implements Task {
                 List<ArchivedFile> bookInfoByName = QueryArchivedResFileUtils.findBookInfoByName(extract);
                 finishQuery(queryLog, bookInfoByName);
             }
+
+            // 超时关闭
+            if (overTime(queryLog)) {
+                stopQuery(queryLog);
+            }
         });
 
         LogUtils.info("求文任务检查已结束");
+    }
+
+    /**
+     * 超时
+     *
+     * @param queryLog 查询日志
+     * @return boolean
+     */
+    private boolean overTime(QueryLog queryLog) {
+        if (ObjectUtil.isNull(queryLog)) {
+            return false;
+        }
+
+        // 几天没处理了
+        long between = DateUtil.between(queryLog.getSendTime(), DateUtil.date(), DateUnit.DAY);
+
+        return between > QiuWenConstant.QIU_WEN_MAX_DAY_WILL_FAIL && 1 == queryLog.getStatus();
     }
 }

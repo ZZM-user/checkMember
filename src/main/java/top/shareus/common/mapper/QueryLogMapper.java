@@ -46,6 +46,6 @@ public interface QueryLogMapper extends BaseMapper<QueryLog> {
      * @return {@link List}<{@link QueryLog}>
      */
     @Select("SELECT count(1) FROM query_log WHERE DATEDIFF(NOW(), send_time) = 1")
-    List<QueryLog> countByYesterday();
+    Integer countByYesterday();
 
 }
