@@ -60,7 +60,7 @@ public class QueryArchivedResFileUtils {
         if (times >= QiuWenConstant.ERROR_TEMPLATE_MAX_TIMES_OF_WEEK) {
             Bot bot = BotManager.getBot();
             Group group = bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0));
-            group.sendMessage("请注意 \n发现[" + senderId + senderName + "]\n该用户本周第 " + times + " 次，求文规范错误");
+            group.sendMessage("请注意 \n发现 【" + senderName + "】(" + senderId + ")]\n该用户本周第 " + times + " 次，求文规范错误");
         }
     }
 
@@ -96,6 +96,10 @@ public class QueryArchivedResFileUtils {
      */
     public static String extractBookInfo(PlainText plainText) {
         if (ObjectUtil.isNull(plainText)) {
+            return "";
+        }
+
+        if (!plainText.getContent().startsWith("书名")) {
             return "";
         }
 

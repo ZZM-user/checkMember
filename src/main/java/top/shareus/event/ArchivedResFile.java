@@ -63,6 +63,7 @@ public class ArchivedResFile extends SimpleListenerHost {
                 try {
                     String uploadFilePath = AlistUtils.uploadFile(file);
                     if (StrUtil.isNotBlank(uploadFilePath)) {
+                        archivedFile.setArchiveUrl(uploadFilePath);
                         LogUtils.info(archivedFile.toString());
                         // 将信息 写入数据库
                         MybatisPlusUtils.getMapper(ArchivedFileMapper.class).insert(archivedFile);

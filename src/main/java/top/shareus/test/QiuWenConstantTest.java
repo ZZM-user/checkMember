@@ -20,6 +20,16 @@ class QiuWenConstantTest {
 
     @org.junit.jupiter.api.Test
     void getExpireTime() {
+        String content = "求文\n书名：大萨达\n作者：xxx\n平台：晋江";
+        String[] split = content.split("\n");
+        String result = split[1].substring(Math.max(split[1].indexOf(":") + 1, split[1].indexOf("：") + 1)).trim();
+        System.out.println("result = " + result);
+        boolean isqiuwen = content.startsWith("书名");
+        System.out.println("isqiuwen = " + isqiuwen);
+
+        boolean b = true && !(StrUtil.containsAny("我在", "请假"));
+        System.out.println("b = " + b);
+
         long between = DateUtil.between(DateTime.now(), DateUtil.endOfDay(new Date()), DateUnit.SECOND, true);
         System.out.println(between);
         System.out.println(24.0 - (between / 60.0 / 60.0));

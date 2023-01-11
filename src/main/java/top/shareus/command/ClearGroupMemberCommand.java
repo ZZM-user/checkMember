@@ -1,7 +1,7 @@
 package top.shareus.command;
 
-import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import net.mamoe.mirai.Bot;
@@ -69,8 +69,6 @@ public class ClearGroupMemberCommand extends JRawCommand {
         ContactList<NormalMember> adminGroupMembers = adminGroup.getMembers();
         List<NormalMemberVO> invalidMembers = new ArrayList<>();
 
-        DateTime offset2 = DateTime.now().offset(DateField.MONTH, -2);
-        DateTime offset3 = DateTime.now().offset(DateField.MONTH, -3);
         for (NormalMember member : members) {
             long id = member.getId();
 
@@ -81,29 +79,27 @@ public class ClearGroupMemberCommand extends JRawCommand {
             }
 
             long timeStamp = member.getLastSpeakTimestamp() * 1000L;
+            long diffMonth = DateUtil.between(DateUtil.date(timeStamp), DateUtil.date(), DateUnit.DAY);
 
-            // 拥有专属头衔
-            if (StrUtil.isNotBlank(member.getSpecialTitle())) {
+            // 三月以上未发言者
+            if (diffMonth >= 3 * 30) {
+                invalidMembers.add(NormalMemberVO.toMemberVO(member, "三月以上未发言者"));
+                String message = "长时间未发言被移出";
+//                member.kick(message);
+                CheckMember.INSTANCE.getLogger().info(member.getId() + "-" + member.getNick() + "-" + message);
                 continue;
             }
 
             // 两月以上未发言者 且未备注请假
-            if (DateTime.of(timeStamp).before(offset2) && !("请假".equals(member.getNameCard()))) {
+            if ((diffMonth >= 2 * 30) && !(StrUtil.containsAny(member.getNameCard(), "请假"))) {
                 invalidMembers.add(NormalMemberVO.toMemberVO(member, "两月以上未发言者 且未备注请假"));
                 String message = "长时间未发言被移出";
-                member.kick(message);
+//                member.kick(message);
                 CheckMember.INSTANCE.getLogger().info(member.getId() + "-" + member.getNick() + "-" + message);
             }
 
-            // 三月以上未发言者
-            if (DateTime.of(timeStamp).before(offset3)) {
-                invalidMembers.add(NormalMemberVO.toMemberVO(member, "三月以上未发言者"));
-                String message = "长时间未发言被移出";
-                member.kick(message);
-                CheckMember.INSTANCE.getLogger().info(member.getId() + "-" + member.getNick() + "-" + message);
-            }
         }
         String path = ExcelUtils.exportMemberDataExcel(invalidMembers, group.getName() + " - 失效群员名单");
-        GroupUploadFileUtils.uploadFile(group, path);
+        GroupUploadFileUtils.uploadFile(bot.getGroup(GroupsConstant.ADMIN_GROUPS.get(0)), path);
     }
 }
